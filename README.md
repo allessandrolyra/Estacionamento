@@ -50,6 +50,8 @@ Acesse http://localhost:3000
 2. Configure as variáveis de ambiente
 3. Deploy automático em cada push
 
+**Comandos:** veja `DEPLOY.md` — sempre que houver alterações, os comandos de deploy estão lá.
+
 ## Estrutura
 
 - `/login` — Login

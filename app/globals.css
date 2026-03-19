@@ -654,3 +654,123 @@ input:focus, select:focus, button:focus-visible {
 .admin-usuarios-btn-excluir:hover:not(:disabled) {
   background: #fef2f2;
 }
+
+/* Relatórios */
+.relatorios-container {
+  max-width: 1000px;
+}
+
+.relatorios-filtros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.relatorios-filtros-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.relatorios-graficos {
+  margin-bottom: 1.5rem;
+}
+
+.relatorios-graficos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 700px) {
+  .relatorios-graficos-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.relatorio-grafico-barras {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.grafico-barra-item {
+  display: grid;
+  grid-template-columns: 100px 1fr 120px;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.grafico-barra-label {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.grafico-barra-track {
+  height: 24px;
+  background: #f1f5f9;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.grafico-barra-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0ea5e9, #0284c7);
+  border-radius: var(--radius-sm);
+  transition: width 0.3s ease;
+}
+
+.grafico-barra-valor {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.relatorio-grafico-stacked {
+  display: flex;
+  height: 32px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  min-width: 120px;
+}
+
+.grafico-stacked-item {
+  transition: width 0.3s ease;
+}
+
+.grafico-stacked-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.grafico-stacked-legenda-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.grafico-stacked-cor {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.relatorios-table-wrap {
+  overflow-x: auto;
+}
+
+.relatorios-paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
