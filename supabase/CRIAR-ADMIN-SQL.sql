@@ -30,6 +30,7 @@ BEGIN
   INSERT INTO auth.users (
     id, instance_id, aud, role, email, encrypted_password,
     email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+    confirmation_token, recovery_token, email_change,
     created_at, updated_at
   ) VALUES (
     v_user_id,
@@ -41,6 +42,7 @@ BEGIN
     NOW(),
     '{"provider":"email","providers":["email"]}',
     '{"role":"admin"}',
+    '', '', '',
     NOW(),
     NOW()
   );

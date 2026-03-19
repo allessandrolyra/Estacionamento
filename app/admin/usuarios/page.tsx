@@ -16,7 +16,12 @@ export default async function AdminUsuariosPage() {
 
     users = await listUsers();
   } catch (e) {
-    error = e instanceof Error ? e.message : "Erro ao carregar usuários. Verifique se SUPABASE_SERVICE_ROLE_KEY está configurado no .env.local.";
+    const msg = e instanceof Error ? e.message : "";
+    if (msg.includes("Database error") || msg.includes("finding users") || msg.includes("service_role")) {
+      error = "Erro ao listar usuários. Configure SUPABASE_SERVICE_ROLE_KEY no Vercel (Settings > Environment Variables). Obtenha em Supabase > Project Settings > API > service_role.";
+    } else {
+      error = msg || "Erro ao carregar usuários. Verifique SUPABASE_SERVICE_ROLE_KEY.";
+    }
   }
 
   return (
