@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { registrarEntrada, registrarSaida } from "@/lib/services/entrada-service";
+import {
+  registrarEntrada,
+  registrarSaida,
+  calcularSaida,
+  getVagasDisponiveis,
+} from "@/lib/services/entrada-service";
 import type { TipoVeiculo } from "@/lib/types";
+import type { TipoPagamento, SaidaPreview } from "@/lib/services/entrada-service";
 
 interface Props {
   total: number;
@@ -12,19 +18,54 @@ interface Props {
   lotado: boolean;
 }
 
+interface EntradaAtiva {
+  id: string;
+  placa: string;
+  tipo: string;
+  entrada_em: string;
+  vaga_numero: number | null;
+}
+
+const TIPOS_PAGAMENTO: { value: TipoPagamento; label: string }[] = [
+  { value: "dinheiro", label: "Dinheiro" },
+  { value: "cartao_debito", label: "Cartão Débito" },
+  { value: "cartao_credito", label: "Cartão Crédito" },
+  { value: "pix", label: "PIX" },
+  { value: "outros", label: "Outros" },
+];
+
 export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props) {
   const [vagas, setVagas] = useState({ total, ocupadas, disponiveis, lotado });
   const [placaEntrada, setPlacaEntrada] = useState("");
   const [tipoEntrada, setTipoEntrada] = useState<TipoVeiculo>("rotativo");
+  const [vagaEscolhida, setVagaEscolhida] = useState<number | "auto">("auto");
+  const [vagasDisponiveis, setVagasDisponiveis] = useState<number[]>([]);
+  const [entradasAtivas, setEntradasAtivas] = useState<EntradaAtiva[]>([]);
   const [placaSaida, setPlacaSaida] = useState("");
+  const [saidaPreview, setSaidaPreview] = useState<SaidaPreview | null>(null);
+  const [tipoPagamento, setTipoPagamento] = useState<TipoPagamento>("dinheiro");
   const [msg, setMsg] = useState("");
-  const [valorPago, setValorPago] = useState<number | null>(null);
 
   useEffect(() => {
     setVagas({ total, ocupadas, disponiveis, lotado });
   }, [total, ocupadas, disponiveis, lotado]);
 
   useEffect(() => {
+    getVagasDisponiveis().then(setVagasDisponiveis);
+  }, [vagas.disponiveis]);
+
+  function carregarEntradasAtivas() {
+    const supabase = createClient();
+    supabase
+      .from("entradas")
+      .select("id, placa, tipo, entrada_em, vaga_numero")
+      .is("saida_em", null)
+      .order("entrada_em", { ascending: false })
+      .then(({ data }) => setEntradasAtivas(data ?? []));
+  }
+
+  useEffect(() => {
+    carregarEntradasAtivas();
     const supabase = createClient();
     const channel = supabase
       .channel("vagas")
@@ -41,6 +82,8 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
           const o = count ?? 0;
           const d = Math.max(0, t - o);
           setVagas({ total: t, ocupadas: o, disponiveis: d, lotado: d === 0 });
+          carregarEntradasAtivas();
+          getVagasDisponiveis().then(setVagasDisponiveis);
         }
       )
       .subscribe();
@@ -52,7 +95,8 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
   async function handleEntrada(e: React.FormEvent) {
     e.preventDefault();
     setMsg("");
-    const r = await registrarEntrada(placaEntrada.trim(), tipoEntrada);
+    const vaga = vagaEscolhida === "auto" ? undefined : vagaEscolhida;
+    const r = await registrarEntrada(placaEntrada.trim(), tipoEntrada, vaga);
     if (r.ok) {
       const lado = r.vaga && r.vaga <= 40 ? "esquerdo" : "direito";
       setMsg(r.vaga ? `Entrada registrada! Vaga ${r.vaga} (${lado})` : "Entrada registrada!");
@@ -62,18 +106,35 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
     }
   }
 
-  async function handleSaida(e: React.FormEvent) {
+  async function handleConsultarSaida(e: React.FormEvent) {
     e.preventDefault();
     setMsg("");
-    setValorPago(null);
-    const r = await registrarSaida(placaSaida.trim());
+    setSaidaPreview(null);
+    const r = await calcularSaida(placaSaida.trim());
     if (r.ok) {
-      setMsg("Saída registrada!");
-      if (r.valorPago != null) setValorPago(r.valorPago);
-      setPlacaSaida("");
+      setSaidaPreview(r.preview);
     } else {
       setMsg(r.error || "Erro");
     }
+  }
+
+  async function handleConfirmarSaida(e: React.FormEvent) {
+    e.preventDefault();
+    if (!saidaPreview) return;
+    setMsg("");
+    const r = await registrarSaida(saidaPreview.placa, saidaPreview.valorPago > 0 ? tipoPagamento : undefined);
+    if (r.ok) {
+      setMsg("Saída registrada!");
+      setPlacaSaida("");
+      setSaidaPreview(null);
+    } else {
+      setMsg(r.error || "Erro");
+    }
+  }
+
+  function cancelarSaida() {
+    setSaidaPreview(null);
+    setMsg("");
   }
 
   return (
@@ -124,6 +185,24 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
                 <option value="mensalista">Mensalista</option>
               </select>
             </div>
+            <div className="dash-field">
+              <label>Vaga (opcional)</label>
+              <select
+                className="dash-input"
+                value={vagaEscolhida}
+                onChange={(e) =>
+                  setVagaEscolhida(e.target.value === "auto" ? "auto" : Number(e.target.value))
+                }
+                disabled={vagas.lotado}
+              >
+                <option value="auto">Automático (melhor opção)</option>
+                {vagasDisponiveis.map((v) => (
+                  <option key={v} value={v}>
+                    Vaga {v}
+                  </option>
+                ))}
+              </select>
+            </div>
             <button
               type="submit"
               className="dash-btn dash-btn-entrada"
@@ -136,26 +215,84 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
 
         <div className="dash-form-card">
           <h2>Saída</h2>
-          <form onSubmit={handleSaida}>
-            <div className="dash-field">
-              <label>Placa</label>
-              <input
-                type="text"
-                className="dash-input"
-                value={placaSaida}
-                onChange={(e) => setPlacaSaida(e.target.value.toUpperCase())}
-                placeholder="ABC-1234"
-                maxLength={8}
-              />
-            </div>
-            {valorPago != null && (
-              <p className="dash-valor-pago">Valor: R$ {valorPago.toFixed(2)}</p>
-            )}
-            <button type="submit" className="dash-btn dash-btn-saida">
-              Registrar Saída
-            </button>
-          </form>
+          {!saidaPreview ? (
+            <form onSubmit={handleConsultarSaida}>
+              <div className="dash-field">
+                <label>Placa</label>
+                <input
+                  type="text"
+                  className="dash-input"
+                  value={placaSaida}
+                  onChange={(e) => setPlacaSaida(e.target.value.toUpperCase())}
+                  placeholder="ABC-1234"
+                  maxLength={8}
+                />
+              </div>
+              <button type="submit" className="dash-btn dash-btn-saida">
+                Consultar valor
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleConfirmarSaida}>
+              <div className="dash-saida-preview">
+                <p><strong>Placa:</strong> {saidaPreview.placa}</p>
+                <p><strong>Vaga:</strong> {saidaPreview.vaga ?? "-"}</p>
+                <p><strong>Entrada:</strong> {new Date(saidaPreview.entradaEm).toLocaleString("pt-BR")}</p>
+                <p><strong>Tempo:</strong> {saidaPreview.tempoMinutos} min</p>
+                <p><strong>Valor a cobrar:</strong> R$ {saidaPreview.valorPago.toFixed(2)}</p>
+              </div>
+              {saidaPreview.valorPago > 0 && (
+                <div className="dash-field">
+                  <label>Tipo de pagamento</label>
+                  <select
+                    className="dash-input"
+                    value={tipoPagamento}
+                    onChange={(e) => setTipoPagamento(e.target.value as TipoPagamento)}
+                  >
+                    {TIPOS_PAGAMENTO.map((t) => (
+                      <option key={t.value} value={t.value}>{t.label}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
+                <button type="submit" className="dash-btn dash-btn-saida">
+                  Confirmar saída
+                </button>
+                <button type="button" className="dash-btn" style={{ background: "#666" }} onClick={cancelarSaida}>
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          )}
         </div>
+      </div>
+
+      <div className="dash-form-card" style={{ marginTop: "1.5rem" }}>
+        <h2>Entradas ativas</h2>
+        <table className="admin-usuarios-table">
+          <thead>
+            <tr>
+              <th>Placa</th>
+              <th>Vaga</th>
+              <th>Tipo</th>
+              <th>Hora entrada</th>
+            </tr>
+          </thead>
+          <tbody>
+            {entradasAtivas.map((e) => (
+              <tr key={e.id}>
+                <td>{e.placa}</td>
+                <td>{e.vaga_numero ?? "-"}</td>
+                <td>{e.tipo}</td>
+                <td>{new Date(e.entrada_em).toLocaleString("pt-BR")}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {entradasAtivas.length === 0 && (
+          <p className="admin-usuarios-empty">Nenhuma entrada ativa</p>
+        )}
       </div>
 
       {msg && (

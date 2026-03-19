@@ -372,6 +372,17 @@ input:focus, select:focus, button:focus-visible {
   color: var(--color-success);
 }
 
+.dash-saida-preview {
+  background: var(--color-surface-alt);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+}
+
+.dash-saida-preview p {
+  margin: 0.25rem 0;
+}
+
 /* Login */
 .login-page {
   min-height: 100vh;

@@ -9,7 +9,8 @@ export default async function AdminDashboardPage() {
   let ocupadas = 0;
   let disponiveis = 80;
   let totalFaturamento = 0;
-  let entradasAtivas: { id: string; placa: string; tipo: string; entrada_em: string }[] = [];
+  let valorTotalRecebido = 0;
+  let entradasAtivas: { id: string; placa: string; tipo: string; entrada_em: string; vaga_numero: number | null }[] = [];
   let error = "";
 
   try {
@@ -29,9 +30,15 @@ export default async function AdminDashboardPage() {
 
     totalFaturamento = faturamento?.reduce((s, e) => s + (e.valor_pago ?? 0), 0) ?? 0;
 
+    const { data: totalRecebido } = await supabase
+      .from("entradas")
+      .select("valor_pago")
+      .not("saida_em", "is", null);
+    valorTotalRecebido = totalRecebido?.reduce((s, e) => s + (e.valor_pago ?? 0), 0) ?? 0;
+
     const { data: entradas } = await supabase
       .from("entradas")
-      .select("id, placa, tipo, entrada_em")
+      .select("id, placa, tipo, entrada_em, vaga_numero")
       .is("saida_em", null)
       .order("entrada_em", { ascending: false });
 
@@ -70,6 +77,10 @@ export default async function AdminDashboardPage() {
           <div className="dash-stat-value total">R$ {totalFaturamento.toFixed(2)}</div>
           <div className="dash-stat-label">Faturamento hoje</div>
         </div>
+        <div className="dash-stat-card">
+          <div className="dash-stat-value total">R$ {valorTotalRecebido.toFixed(2)}</div>
+          <div className="dash-stat-label">Valor total recebido</div>
+        </div>
       </div>
 
       <div className="dash-form-card">
@@ -78,14 +89,16 @@ export default async function AdminDashboardPage() {
           <thead>
             <tr>
               <th>Placa</th>
+              <th>Vaga</th>
               <th>Tipo</th>
-              <th>Entrada</th>
+              <th>Hora entrada</th>
             </tr>
           </thead>
           <tbody>
             {entradasAtivas.map((e) => (
               <tr key={e.id}>
                 <td>{e.placa}</td>
+                <td>{e.vaga_numero ?? "-"}</td>
                 <td>{e.tipo}</td>
                 <td>{new Date(e.entrada_em).toLocaleString("pt-BR")}</td>
               </tr>
