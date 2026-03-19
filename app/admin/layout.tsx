@@ -22,6 +22,7 @@ export default async function AdminLayout({
         <nav className="dash-nav">
           <Link href="/admin/dashboard" className="dash-nav-main">Admin</Link>
           <Link href="/admin/dashboard">Dashboard</Link>
+          <Link href="/dashboard">Operações</Link>
           <Link href="/admin/mapa">Mapa de Vagas</Link>
           <Link href="/admin/mensalistas">Mensalistas</Link>
           <Link href="/admin/config">Config</Link>

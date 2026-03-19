@@ -13,6 +13,7 @@ export default async function DashboardLayout({
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+  const isAdmin = user.user_metadata?.role === "admin";
 
   return (
     <div className="dash-layout">
@@ -20,6 +21,9 @@ export default async function DashboardLayout({
         <nav className="dash-nav">
           <Link href="/dashboard" className="dash-nav-main">Estacionamento</Link>
           <Link href="/dashboard/mapa">Mapa de Vagas</Link>
+          {isAdmin && (
+            <Link href="/admin/dashboard">Admin</Link>
+          )}
         </nav>
         <LogoutButton />
       </header>
