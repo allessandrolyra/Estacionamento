@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { validarPlaca, normalizarPlaca } from "@/lib/utils/placa";
 
 interface Mensalista {
   id: string;
@@ -26,10 +27,15 @@ export function MensalistasClient({ initial }: { initial: Mensalista[] }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setMsg("");
+    const placaNorm = normalizarPlaca(placa);
+    if (!validarPlaca(placaNorm)) {
+      setMsg("Placa inválida. Use formato ABC-1234 ou ABC1D23");
+      return;
+    }
     const supabase = createClient();
     const { error } = await supabase.from("mensalistas").insert({
       nome,
-      placa: placa.toUpperCase(),
+      placa: placaNorm,
       validade_ate: validade,
       ativo: true,
     });

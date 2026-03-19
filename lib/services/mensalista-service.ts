@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { validarPlaca, normalizarPlaca } from "@/lib/utils/placa";
 
 export async function listarMensalistas() {
   const supabase = createClient();
@@ -11,10 +12,14 @@ export async function listarMensalistas() {
 }
 
 export async function criarMensalista(nome: string, placa: string, validade_ate: string) {
+  const placaNorm = normalizarPlaca(placa);
+  if (!validarPlaca(placaNorm)) {
+    throw new Error("Placa inválida. Use formato ABC-1234 ou ABC1D23");
+  }
   const supabase = createClient();
   const { error } = await supabase.from("mensalistas").insert({
     nome,
-    placa: placa.toUpperCase(),
+    placa: placaNorm,
     validade_ate,
     ativo: true,
   });
@@ -26,7 +31,12 @@ export async function atualizarMensalista(
   data: { nome?: string; placa?: string; validade_ate?: string; ativo?: boolean }
 ) {
   const supabase = createClient();
-  if (data.placa) data.placa = data.placa.toUpperCase();
+  if (data.placa) {
+    data.placa = normalizarPlaca(data.placa);
+    if (!validarPlaca(data.placa)) {
+      throw new Error("Placa inválida. Use formato ABC-1234 ou ABC1D23");
+    }
+  }
   const { error } = await supabase.from("mensalistas").update(data).eq("id", id);
   if (error) throw error;
 }

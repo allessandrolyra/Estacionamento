@@ -1,7 +1,19 @@
 import { createClient } from "@/lib/supabase/client";
 import type { TipoVeiculo } from "@/lib/types";
+import { validarPlaca, normalizarPlaca } from "@/lib/utils/placa";
 
-export type TipoPagamento = "dinheiro" | "cartao_debito" | "cartao_credito" | "pix" | "outros";
+export type TipoPagamento = "dinheiro" | "cartao_debito" | "cartao_credito" | "pix";
+
+function calcularValorRotativo(
+  entradaEm: Date,
+  valorHora: number,
+  fracaoMin: number
+): number {
+  const saidaEm = new Date();
+  const diffMin = Math.ceil((saidaEm.getTime() - entradaEm.getTime()) / 60000);
+  const fracoes = Math.max(1, Math.ceil(diffMin / fracaoMin));
+  return (valorHora / (60 / fracaoMin)) * fracoes;
+}
 
 export async function getVagasDisponiveis(): Promise<number[]> {
   const supabase = createClient();
@@ -52,63 +64,28 @@ export async function getMapaVagas() {
   return vagas;
 }
 
-async function buscarProximaVagaLivre(): Promise<number | null> {
-  const disponiveis = await getVagasDisponiveis();
-  return disponiveis[0] ?? null;
-}
-
 export async function registrarEntrada(placa: string, tipo: TipoVeiculo, vagaEscolhida?: number) {
+  const placaNorm = normalizarPlaca(placa);
+  if (!validarPlaca(placaNorm)) {
+    return { ok: false, error: "Placa inválida. Use formato ABC-1234 ou ABC1D23" };
+  }
+
   const supabase = createClient();
-  let vaga: number | null;
-
-  if (vagaEscolhida != null) {
-    const disponiveis = await getVagasDisponiveis();
-    if (!disponiveis.includes(vagaEscolhida)) {
-      return { ok: false, error: "Vaga indisponível" };
-    }
-    vaga = vagaEscolhida;
-  } else {
-    vaga = await buscarProximaVagaLivre();
-  }
-
-  if (vaga === null) return { ok: false, error: "Estacionamento lotado" };
-
-  if (tipo === "mensalista") {
-    const { data: mensalista } = await supabase
-      .from("mensalistas")
-      .select("id")
-      .eq("placa", placa.toUpperCase())
-      .eq("ativo", true)
-      .gte("validade_ate", new Date().toISOString().slice(0, 10))
-      .single();
-
-    if (!mensalista) {
-      return { ok: false, error: "Mensalista não encontrado ou fora da validade" };
-    }
-
-    const { error } = await supabase.from("entradas").insert({
-      placa: placa.toUpperCase(),
-      tipo: "mensalista",
-      mensalista_id: mensalista.id,
-      vaga_numero: vaga,
-    });
-    if (error) {
-      if (error.code === "23505") return { ok: false, error: "Placa já possui entrada ativa" };
-      return { ok: false, error: error.message };
-    }
-    return { ok: true, vaga };
-  }
-
-  const { error } = await supabase.from("entradas").insert({
-    placa: placa.toUpperCase(),
-    tipo: "rotativo",
-    vaga_numero: vaga,
+  const { data, error } = await supabase.rpc("registrar_entrada_atomica", {
+    p_placa: placaNorm,
+    p_tipo: tipo,
+    p_vaga_escolhida: vagaEscolhida ?? null,
   });
+
   if (error) {
-    if (error.code === "23505") return { ok: false, error: "Placa já possui entrada ativa" };
     return { ok: false, error: error.message };
   }
-  return { ok: true, vaga };
+
+  const result = data as { ok: boolean; vaga?: number; error?: string };
+  if (!result.ok) {
+    return { ok: false, error: result.error ?? "Erro ao registrar entrada" };
+  }
+  return { ok: true, vaga: result.vaga ?? undefined };
 }
 
 export interface SaidaPreview {
@@ -122,10 +99,11 @@ export interface SaidaPreview {
 
 export async function calcularSaida(placa: string): Promise<{ ok: true; preview: SaidaPreview } | { ok: false; error: string }> {
   const supabase = createClient();
+  const placaNorm = normalizarPlaca(placa);
   const { data: entrada } = await supabase
     .from("entradas")
     .select("id, tipo, entrada_em, vaga_numero")
-    .eq("placa", placa.toUpperCase())
+    .eq("placa", placaNorm)
     .is("saida_em", null)
     .single();
 
@@ -137,19 +115,17 @@ export async function calcularSaida(placa: string): Promise<{ ok: true; preview:
 
   const entradaEm = new Date(entrada.entrada_em);
   const saidaEm = new Date();
-  const diffMs = saidaEm.getTime() - entradaEm.getTime();
-  const diffMin = Math.ceil(diffMs / 60000);
+  const diffMin = Math.ceil((saidaEm.getTime() - entradaEm.getTime()) / 60000);
 
   let valorPago = 0;
   if (entrada.tipo === "rotativo") {
-    const fracoes = Math.max(1, Math.ceil(diffMin / fracaoMin));
-    valorPago = (valorHora / (60 / fracaoMin)) * fracoes;
+    valorPago = calcularValorRotativo(entradaEm, valorHora, fracaoMin);
   }
 
   return {
     ok: true,
     preview: {
-      placa: placa.toUpperCase(),
+      placa: placaNorm,
       vaga: entrada.vaga_numero,
       tipo: entrada.tipo,
       entradaEm: entrada.entrada_em,
@@ -161,10 +137,11 @@ export async function calcularSaida(placa: string): Promise<{ ok: true; preview:
 
 export async function registrarSaida(placa: string, tipoPagamento?: TipoPagamento) {
   const supabase = createClient();
+  const placaNorm = normalizarPlaca(placa);
   const { data: entrada } = await supabase
     .from("entradas")
     .select("id, tipo, entrada_em")
-    .eq("placa", placa.toUpperCase())
+    .eq("placa", placaNorm)
     .is("saida_em", null)
     .single();
 
@@ -176,12 +153,7 @@ export async function registrarSaida(placa: string, tipoPagamento?: TipoPagament
 
   let valorPago: number | null = null;
   if (entrada.tipo === "rotativo") {
-    const saidaEm = new Date();
-    const entradaEm = new Date(entrada.entrada_em);
-    const diffMs = saidaEm.getTime() - entradaEm.getTime();
-    const diffMin = Math.ceil(diffMs / 60000);
-    const fracoes = Math.max(1, Math.ceil(diffMin / fracaoMin));
-    valorPago = (valorHora / (60 / fracaoMin)) * fracoes;
+    valorPago = calcularValorRotativo(new Date(entrada.entrada_em), valorHora, fracaoMin);
   }
 
   const updateData: Record<string, unknown> = {

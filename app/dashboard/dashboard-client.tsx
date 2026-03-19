@@ -31,7 +31,6 @@ const TIPOS_PAGAMENTO: { value: TipoPagamento; label: string }[] = [
   { value: "cartao_debito", label: "Cartão Débito" },
   { value: "cartao_credito", label: "Cartão Crédito" },
   { value: "pix", label: "PIX" },
-  { value: "outros", label: "Outros" },
 ];
 
 export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props) {
