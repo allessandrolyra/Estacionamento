@@ -1,18 +1,27 @@
 "use server";
 
+import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
 export type Role = "admin" | "operador";
 
 export async function listUsers() {
-  const supabase = createAdminClient();
-  const { data, error } = await supabase.auth.admin.listUsers({ perPage: 100 });
-  if (error) throw new Error(error.message);
-  return data.users.map((u) => ({
+  // Usa função SQL (get_users_for_admin) - evita erro "Database error finding users" da API Admin
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_users_for_admin");
+  if (error) {
+    if (error.message.includes("does not exist") || error.code === "42883") {
+      throw new Error(
+        "Execute o SQL em supabase/FUNCAO-LISTAR-USUARIOS.sql no Supabase SQL Editor para criar a função get_users_for_admin."
+      );
+    }
+    throw new Error(error.message);
+  }
+  return (data ?? []).map((u: { id: string; email: string; role: string; created_at: string }) => ({
     id: u.id,
     email: u.email ?? "",
-    role: (u.user_metadata?.role as Role) ?? "operador",
+    role: (u.role as Role) ?? "operador",
     createdAt: u.created_at,
   }));
 }
