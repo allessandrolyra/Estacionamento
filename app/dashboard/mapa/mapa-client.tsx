@@ -65,16 +65,16 @@ export function MapaVagasClient({ vagas: initial, valorHora, fracaoMin }: Props)
 
   const VagaCard = ({ v }: { v: Vaga }) => {
     const ocupada = !!v.placa;
-    const tempoMin =
-      v.entrada_em &&
-      Math.ceil((Date.now() - new Date(v.entrada_em).getTime()) / 60000);
+    const tempoMin: number = v.entrada_em
+      ? Math.ceil((Date.now() - new Date(v.entrada_em).getTime()) / 60000)
+      : 0;
     const valor =
       v.entrada_em && v.tipo
         ? calcularValor(v.entrada_em, valorHora, fracaoMin, v.tipo)
         : 0;
     const tooltipText =
       ocupada && v.entrada_em
-        ? `Tempo: ${formatarTempo(tempoMin ?? 0)}\nValor: R$ ${valor.toFixed(2)}`
+        ? `Tempo: ${formatarTempo(Math.max(0, tempoMin))}\nValor: ${v.tipo === "rotativo" ? `R$ ${valor.toFixed(2)}` : "Isento"}`
         : undefined;
 
     return (
@@ -95,7 +95,7 @@ export function MapaVagasClient({ vagas: initial, valorHora, fracaoMin }: Props)
         )}
         {ocupada && tooltipText && (
           <span className="vaga-tooltip">
-            {formatarTempo(tempoMin ?? 0)}
+            {formatarTempo(Math.max(0, tempoMin))}
             {v.tipo === "rotativo" ? ` • R$ ${valor.toFixed(2)}` : " • Isento"}
           </span>
         )}
