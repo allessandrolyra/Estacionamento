@@ -27,7 +27,9 @@ export function MapaVagasClient({ vagas: initial }: { vagas: Vaga[] }) {
         () => window.location.reload()
       )
       .subscribe();
-    return () => supabase.removeChannel(channel);
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const esquerdo = vagas.filter((v) => v.lado === "esquerdo");
