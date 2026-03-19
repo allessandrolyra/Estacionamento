@@ -11,13 +11,21 @@ git push origin main
 
 ---
 
-## Deploy desta fase (Relatórios — Fase 1)
+## Deploy desta fase (Histórico — Fase 2)
 
 ```bash
 cd "c:\01. Foursys\06. BMAD Cursor\estacionamento"
 git add .
-git commit -m "feat: Fase 1 Relatórios - filtros, gráficos, exportação CSV"
+git commit -m "feat: Fase 2 Histórico - busca por placa"
 git push origin main
+```
+
+---
+
+## Deploy anterior (Relatórios — Fase 1)
+
+```bash
+git commit -m "feat: Fase 1 Relatórios - filtros, gráficos, exportação CSV"
 ```
 
 ---
