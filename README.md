@@ -10,11 +10,18 @@ Sistema web para controle de entrada/saída, vagas e mensalistas. Stack: Next.js
 2. No SQL Editor, execute em ordem:
    - `supabase/migrations/001_initial_schema.sql`
    - `supabase/migrations/002_add_vaga_numero.sql`
-3. **Primeiro usuário Admin** — execute o script:
+3. **Primeiro usuário Admin** — escolha uma opção:
+
+   **Opção A — SQL (recomendado para site online):**
+   - Supabase → SQL Editor → abra `supabase/CRIAR-ADMIN-SQL.sql`
+   - Cole o conteúdo e execute (Run)
+   - Login: `admin@estacionamento.local` | Senha: `Admin@123`
+
+   **Opção B — Script Node (local):**
    ```bash
-   npm run seed:admin
+   npm run seed:admin-padrao
    ```
-   O script pede email e senha e cria o primeiro admin. Requer `SUPABASE_SERVICE_ROLE_KEY` no `.env.local` (obtenha em Project Settings > API > service_role).
+   Cria o mesmo admin padrão. Requer `SUPABASE_SERVICE_ROLE_KEY` no `.env.local`.
 
 ### 2. Variáveis de ambiente
 

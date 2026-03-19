@@ -45,3 +45,25 @@ export async function updateUserRole(userId: string, role: Role) {
   if (error) throw new Error(error.message);
   revalidatePath("/admin/usuarios");
 }
+
+export async function deleteUser(userId: string, users: { id: string; role: Role }[]) {
+  const admins = users.filter((u) => u.role === "admin");
+  const userToDelete = users.find((u) => u.id === userId);
+  if (userToDelete?.role === "admin" && admins.length <= 1) {
+    throw new Error("Não é possível excluir o último admin do sistema.");
+  }
+  const supabase = createAdminClient();
+  const { error } = await supabase.auth.admin.deleteUser(userId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/usuarios");
+}
+
+export async function resetUserPassword(userId: string, newPassword: string) {
+  if (newPassword.length < 6) throw new Error("Senha deve ter no mínimo 6 caracteres.");
+  const supabase = createAdminClient();
+  const { error } = await supabase.auth.admin.updateUserById(userId, {
+    password: newPassword,
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/usuarios");
+}

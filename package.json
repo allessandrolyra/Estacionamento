@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed:admin": "node scripts/seed-admin.js"
+    "seed:admin": "node scripts/seed-admin.js",
+    "seed:admin-padrao": "node scripts/seed-admin-padrao.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",

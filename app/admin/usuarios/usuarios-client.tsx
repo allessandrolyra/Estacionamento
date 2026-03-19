@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createUser, updateUserRole, type Role } from "./actions";
+import { createUser, updateUserRole, deleteUser, resetUserPassword, type Role } from "./actions";
 
 interface User {
   id: string;
@@ -10,12 +10,18 @@ interface User {
   createdAt: string;
 }
 
-export function UsuariosClient({ users }: { users: User[] }) {
+interface Props {
+  users: User[];
+  currentUserId: string;
+}
+
+export function UsuariosClient({ users, currentUserId }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<Role>("operador");
+  const [role, setRole] = useState<Role>("admin");
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resettingId, setResettingId] = useState<string | null>(null);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -44,6 +50,39 @@ export function UsuariosClient({ users }: { users: User[] }) {
       setMsg("Permissão atualizada!");
     } catch (err) {
       setMsg(err instanceof Error ? err.message : "Erro ao atualizar.");
+    }
+  }
+
+  async function handleDelete(userId: string, userEmail: string) {
+    if (userId === currentUserId) {
+      setMsg("Você não pode excluir sua própria conta.");
+      return;
+    }
+    if (!confirm(`Excluir o usuário ${userEmail}? Esta ação não pode ser desfeita.`)) return;
+    setMsg("");
+    try {
+      await deleteUser(userId, users);
+      setMsg("Usuário excluído.");
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : "Erro ao excluir.");
+    }
+  }
+
+  async function handleResetPassword(userId: string) {
+    const senha = prompt("Nova senha (mín. 6 caracteres):");
+    if (!senha || senha.length < 6) {
+      if (senha !== null) setMsg("Senha deve ter no mínimo 6 caracteres.");
+      return;
+    }
+    setMsg("");
+    setResettingId(userId);
+    try {
+      await resetUserPassword(userId, senha);
+      setMsg("Senha alterada com sucesso!");
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : "Erro ao alterar senha.");
+    } finally {
+      setResettingId(null);
     }
   }
 
@@ -112,14 +151,34 @@ export function UsuariosClient({ users }: { users: User[] }) {
                 </td>
                 <td>{new Date(u.createdAt).toLocaleDateString("pt-BR")}</td>
                 <td>
-                  <select
-                    className="admin-usuarios-select"
-                    value={u.role}
-                    onChange={(e) => handleChangeRole(u.id, e.target.value as Role)}
-                  >
-                    <option value="operador">Operador</option>
-                    <option value="admin">Admin</option>
-                  </select>
+                  <div className="admin-usuarios-actions">
+                    <select
+                      className="admin-usuarios-select"
+                      value={u.role}
+                      onChange={(e) => handleChangeRole(u.id, e.target.value as Role)}
+                    >
+                      <option value="operador">Operador</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                    <button
+                      type="button"
+                      className="admin-usuarios-btn admin-usuarios-btn-senha"
+                      onClick={() => handleResetPassword(u.id)}
+                      disabled={resettingId === u.id}
+                      title="Redefinir senha"
+                    >
+                      🔑
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-usuarios-btn admin-usuarios-btn-excluir"
+                      onClick={() => handleDelete(u.id, u.email)}
+                      disabled={u.id === currentUserId}
+                      title={u.id === currentUserId ? "Não é possível excluir sua própria conta" : "Excluir usuário"}
+                    >
+                      🗑
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
