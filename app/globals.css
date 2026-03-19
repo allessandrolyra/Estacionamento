@@ -1,0 +1,579 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+
+:root {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-primary: #0f172a;
+  --color-primary-light: #1e293b;
+  --color-accent: #0ea5e9;
+  --color-success: #10b981;
+  --color-success-bg: #ecfdf5;
+  --color-danger: #ef4444;
+  --color-danger-bg: #fef2f2;
+  --color-muted: #64748b;
+  --color-border: #e2e8f0;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input, select, button {
+  font-family: inherit;
+}
+
+input:focus, select:focus, button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Mapa de Vagas */
+.mapa-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.mapa-header {
+  margin-bottom: 2rem;
+}
+
+.mapa-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.35rem;
+}
+
+.mapa-subtitle {
+  font-size: 0.95rem;
+  color: var(--color-muted);
+}
+
+.mapa-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .mapa-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mapa-lado {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+.mapa-lado-titulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-primary-light);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mapa-lado-icon {
+  font-size: 1.25rem;
+  opacity: 0.7;
+}
+
+.mapa-lado-range {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  margin-left: auto;
+}
+
+.mapa-vagas-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.6rem;
+}
+
+@media (max-width: 600px) {
+  .mapa-vagas-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.vaga-card {
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.vaga-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.vaga-card.vaga-livre {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border: 2px solid #34d399;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+.vaga-card.vaga-ocupada {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #f87171;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+}
+
+.vaga-numero {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+  margin-bottom: 0.2rem;
+}
+
+.vaga-placa {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.vaga-tipo {
+  font-size: 0.7rem;
+  opacity: 0.85;
+  margin-top: 0.15rem;
+}
+
+.vaga-vazia {
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.mapa-legenda {
+  margin-top: 2rem;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.legenda-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+.legenda-box {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+}
+
+.legenda-livre {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border: 2px solid #34d399;
+}
+
+.legenda-ocupada {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #f87171;
+}
+
+/* Dashboard */
+.dash-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.dash-alert-lotado {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: white;
+  padding: 1rem 1.25rem;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 600px) {
+  .dash-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dash-stat-card {
+  background: var(--color-surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}
+
+.dash-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.dash-stat-value.total { color: #0ea5e9; }
+.dash-stat-value.disponiveis { color: var(--color-success); }
+.dash-stat-value.ocupadas { color: var(--color-danger); }
+
+.dash-stat-label {
+  font-size: 0.9rem;
+  color: var(--color-muted);
+  margin-top: 0.25rem;
+}
+
+.dash-forms {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 700px) {
+  .dash-forms {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dash-form-card {
+  background: var(--color-surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.dash-form-card h2 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.dash-field {
+  margin-bottom: 0.75rem;
+}
+
+.dash-field label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-primary-light);
+}
+
+.dash-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+}
+
+.dash-input:focus {
+  border-color: var(--color-accent);
+}
+
+.dash-btn {
+  width: 100%;
+  padding: 0.65rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.05s;
+}
+
+.dash-btn:active {
+  transform: scale(0.98);
+}
+
+.dash-btn-entrada {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.dash-btn-entrada:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.dash-btn-saida {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.dash-msg {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+}
+
+.dash-msg.success {
+  background: var(--color-success-bg);
+  color: #047857;
+}
+
+.dash-msg.error {
+  background: var(--color-danger-bg);
+  color: #b91c1c;
+}
+
+.dash-valor-pago {
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: var(--color-success);
+}
+
+/* Login */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.login-card {
+  background: var(--color-surface);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 360px;
+}
+
+.login-card h1 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.login-field {
+  margin-bottom: 1rem;
+}
+
+.login-field label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-primary-light);
+}
+
+.login-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+}
+
+.login-input:focus {
+  border-color: var(--color-accent);
+}
+
+.login-error {
+  color: var(--color-danger);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 0.65rem;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.05s;
+}
+
+.login-btn:active {
+  transform: scale(0.98);
+}
+
+/* Dashboard layout */
+.dash-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+}
+
+.dash-nav {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.dash-nav a {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+  transition: opacity 0.15s;
+}
+
+.dash-nav a:hover {
+  opacity: 0.9;
+}
+
+.dash-nav-main {
+  font-weight: 700;
+}
+
+.dash-main {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+.admin-header {
+  background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+}
+
+.dash-logout-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: white;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.dash-logout-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: white;
+}
+
+/* Admin Usuários */
+.admin-usuarios {
+  max-width: 900px;
+}
+
+.admin-usuarios-card {
+  background: var(--color-surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 1.5rem;
+}
+
+.admin-usuarios-card h2 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.admin-usuarios-field {
+  margin-bottom: 0.75rem;
+}
+
+.admin-usuarios-field label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.admin-usuarios-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-usuarios-table th,
+.admin-usuarios-table td {
+  text-align: left;
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-usuarios-badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.admin-usuarios-badge-admin {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.admin-usuarios-badge-operador {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.admin-usuarios-select {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.admin-usuarios-empty {
+  padding: 1rem;
+  color: var(--color-muted);
+}
