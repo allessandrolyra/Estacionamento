@@ -8,9 +8,37 @@ interface Vaga {
   lado: "esquerdo" | "direito";
   placa?: string;
   tipo?: string;
+  entrada_em?: string;
 }
 
-export function MapaVagasClient({ vagas: initial }: { vagas: Vaga[] }) {
+function formatarTempo(minutos: number): string {
+  if (minutos < 60) return `${minutos} min`;
+  const h = Math.floor(minutos / 60);
+  const m = minutos % 60;
+  return m > 0 ? `${h}h ${m}min` : `${h}h`;
+}
+
+function calcularValor(
+  entradaEm: string,
+  valorHora: number,
+  fracaoMin: number,
+  tipo: string
+): number {
+  if (tipo === "mensalista") return 0;
+  const diffMin = Math.ceil(
+    (Date.now() - new Date(entradaEm).getTime()) / 60000
+  );
+  const fracoes = Math.max(1, Math.ceil(diffMin / fracaoMin));
+  return (valorHora / (60 / fracaoMin)) * fracoes;
+}
+
+interface Props {
+  vagas: Vaga[];
+  valorHora: number;
+  fracaoMin: number;
+}
+
+export function MapaVagasClient({ vagas: initial, valorHora, fracaoMin }: Props) {
   const [vagas, setVagas] = useState(initial);
 
   useEffect(() => {
@@ -37,16 +65,39 @@ export function MapaVagasClient({ vagas: initial }: { vagas: Vaga[] }) {
 
   const VagaCard = ({ v }: { v: Vaga }) => {
     const ocupada = !!v.placa;
+    const tempoMin =
+      v.entrada_em &&
+      Math.ceil((Date.now() - new Date(v.entrada_em).getTime()) / 60000);
+    const valor =
+      v.entrada_em && v.tipo
+        ? calcularValor(v.entrada_em, valorHora, fracaoMin, v.tipo)
+        : 0;
+    const tooltipText =
+      ocupada && v.entrada_em
+        ? `Tempo: ${formatarTempo(tempoMin ?? 0)}\nValor: R$ ${valor.toFixed(2)}`
+        : undefined;
+
     return (
-      <div className={`vaga-card ${ocupada ? "vaga-ocupada" : "vaga-livre"}`}>
+      <div
+        className={`vaga-card ${ocupada ? "vaga-ocupada" : "vaga-livre"}`}
+        title={tooltipText}
+      >
         <span className="vaga-numero">Vaga {v.numero}</span>
         {ocupada ? (
-          <div>
+          <div className="vaga-ocupada-content">
             <span className="vaga-placa">{v.placa}</span>
-            <span className="vaga-tipo">{v.tipo === "mensalista" ? "Mensalista" : "Rotativo"}</span>
+            <span className="vaga-tipo">
+              {v.tipo === "mensalista" ? "Mensalista" : "Rotativo"}
+            </span>
           </div>
         ) : (
           <span className="vaga-vazia">Livre</span>
+        )}
+        {ocupada && tooltipText && (
+          <span className="vaga-tooltip">
+            {formatarTempo(tempoMin ?? 0)}
+            {v.tipo === "rotativo" ? ` • R$ ${valor.toFixed(2)}` : " • Isento"}
+          </span>
         )}
       </div>
     );
@@ -57,7 +108,7 @@ export function MapaVagasClient({ vagas: initial }: { vagas: Vaga[] }) {
       <div className="mapa-header">
         <h1>Mapa de Vagas</h1>
         <p className="mapa-subtitle">
-          Visualização em tempo real — verde = disponível, vermelho = ocupada
+          Verde = disponível, vermelho = ocupada. Passe o mouse na vaga ocupada para ver tempo e valor.
         </p>
       </div>
 
