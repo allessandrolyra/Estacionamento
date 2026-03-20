@@ -61,6 +61,10 @@ Acesse http://localhost:3000
 - `/admin/config` — Configuração de tarifas
 - `/admin/usuarios` — Gestão de usuários (listar, criar, alterar permissões)
 
+## Roadmap
+
+Veja `ROADMAP.md` — fases planejadas e escopo detalhado (Fechamento de caixa, Múltiplas tabelas, Convênios, etc.).
+
 ## Documentação
 
 - Product Brief: `_bmad-output/meq/planning/product-brief-estacionamento.md`

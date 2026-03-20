@@ -49,8 +49,12 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
     setVagas({ total, ocupadas, disponiveis, lotado });
   }, [total, ocupadas, disponiveis, lotado]);
 
-  useEffect(() => {
+  function recarregarVagasDisponiveis() {
     getVagasDisponiveis().then(setVagasDisponiveis);
+  }
+
+  useEffect(() => {
+    recarregarVagasDisponiveis();
   }, [vagas.disponiveis]);
 
   function carregarEntradasAtivas() {
@@ -82,7 +86,7 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
           const d = Math.max(0, t - o);
           setVagas({ total: t, ocupadas: o, disponiveis: d, lotado: d === 0 });
           carregarEntradasAtivas();
-          getVagasDisponiveis().then(setVagasDisponiveis);
+          recarregarVagasDisponiveis();
         }
       )
       .subscribe();
@@ -185,13 +189,14 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
               </select>
             </div>
             <div className="dash-field">
-              <label>Vaga (opcional)</label>
+              <label>Vaga (apenas disponíveis)</label>
               <select
                 className="dash-input"
                 value={vagaEscolhida}
                 onChange={(e) =>
                   setVagaEscolhida(e.target.value === "auto" ? "auto" : Number(e.target.value))
                 }
+                onFocus={recarregarVagasDisponiveis}
                 disabled={vagas.lotado}
               >
                 <option value="auto">Automático (melhor opção)</option>

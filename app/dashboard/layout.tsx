@@ -22,7 +22,10 @@ export default async function DashboardLayout({
           <Link href="/dashboard" className="dash-nav-main">Estacionamento</Link>
           <Link href="/dashboard/mapa">Mapa de Vagas</Link>
           {isAdmin && (
-            <Link href="/admin/dashboard">Admin</Link>
+            <>
+              <Link href="/admin/fechamento">Fechamento</Link>
+              <Link href="/admin/dashboard">Admin</Link>
+            </>
           )}
         </nav>
         <LogoutButton />

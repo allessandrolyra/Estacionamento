@@ -1,5 +1,11 @@
 # Deploy — Sistema de Estacionamento
 
+## Regra do Marco
+
+**Ao final de cada fase, sempre fazer deploy.** Combinado.
+
+---
+
 ## Comandos padrão (copiar e colar)
 
 ```bash
@@ -11,7 +17,18 @@ git push origin main
 
 ---
 
-## Deploy desta fase (Design visual e responsivo)
+## Deploy desta fase (Fase 3 — Fechamento de caixa)
+
+```bash
+cd "c:\01. Foursys\06. BMAD Cursor\estacionamento"
+git add .
+git commit -m "feat: Fase 3 - Fechamento de caixa, relatório impressão, ajuste seletor vagas"
+git push origin main
+```
+
+---
+
+## Deploy anterior (Design visual e responsivo)
 
 ```bash
 cd "c:\01. Foursys\06. BMAD Cursor\estacionamento"
