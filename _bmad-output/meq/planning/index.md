@@ -4,6 +4,14 @@
 
 ---
 
+## Histórico de Sessão (retomada de trabalho)
+
+| Documento | Descrição |
+|-----------|-----------|
+| [**HISTORICO-MEQ.md**](../HISTORICO-MEQ.md) | Changelog completo, o que foi feito, como continuar amanhã |
+
+---
+
 ## Documentos
 
 | Documento | Descrição |
