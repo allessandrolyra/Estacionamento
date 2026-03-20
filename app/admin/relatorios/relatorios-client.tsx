@@ -28,6 +28,18 @@ function tempoMinutos(entrada: string, saida: string): number {
   );
 }
 
+function labelPagamento(tipo: string | null, tipoVeiculo: string): string {
+  if (tipoVeiculo === "mensalista") return "Isento";
+  if (!tipo) return "-";
+  const labels: Record<string, string> = {
+    dinheiro: "Dinheiro",
+    cartao_debito: "Cartão Débito",
+    cartao_credito: "Cartão Crédito",
+    pix: "PIX",
+  };
+  return labels[tipo] ?? tipo;
+}
+
 export function RelatoriosClient() {
   const hoje = new Date().toISOString().slice(0, 10);
   const primeiroDia = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
@@ -81,6 +93,107 @@ export function RelatoriosClient() {
     a.download = `relatorio-${filtros.dataInicial}-${filtros.dataFinal}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  function handleImprimir() {
+    const janela = window.open("", "_blank", "width=900,height=700");
+    if (!janela) return;
+    const dataIniBR = new Date(filtros.dataInicial + "T12:00:00").toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+    const dataFimBR = new Date(filtros.dataFinal + "T12:00:00").toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+    const cores = ["#0ea5e9", "#10b981", "#f59e0b", "#8b5cf6", "#64748b"];
+    const porTipo = (resumo?.porTipoPagamento ?? []).filter((p) => p.valor > 0);
+    const total = resumo?.totalRecebido ?? 1;
+    let acc = 0;
+    const graficoPizza =
+      porTipo.length > 0 && total > 0
+        ? porTipo
+            .map((p, i) => {
+              const pct = (p.valor / total) * 100;
+              const start = acc;
+              acc += pct;
+              return `${cores[i % cores.length]} ${start}% ${acc}%`;
+            })
+            .join(", ")
+        : "transparent 0% 100%";
+    janela.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Relatório - ${filtros.dataInicial} a ${filtros.dataFinal}</title>
+        <style>
+          body { font-family: system-ui, sans-serif; padding: 2rem; font-size: 13px; }
+          h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+          .subtitulo { color: #666; margin-bottom: 1.5rem; }
+          .resumo { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+          .resumo-item { padding: 0.6rem 1rem; background: #f1f5f9; border-radius: 8px; }
+          .resumo-item strong { display: block; font-size: 1.15rem; }
+          .graficos { display: flex; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: flex-start; }
+          .grafico-pizza { width: 180px; height: 180px; border-radius: 50%; background: conic-gradient(${graficoPizza}); flex-shrink: 0; }
+          .grafico-legenda { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+          .legenda-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; }
+          .legenda-cor { width: 12px; height: 12px; border-radius: 3px; }
+          table { width: 100%; border-collapse: collapse; font-size: 12px; }
+          th, td { padding: 0.4rem 0.5rem; border-bottom: 1px solid #e2e8f0; text-align: left; }
+          th { background: #f8fafc; font-weight: 600; }
+          @media print { body { padding: 1rem; } .no-print { display: none; } }
+        </style>
+      </head>
+      <body>
+        <h1>Relatório de Movimentação</h1>
+        <p class="subtitulo">Estacionamento — ${dataIniBR} a ${dataFimBR}</p>
+        <div class="resumo">
+          <div class="resumo-item"><strong>R$ ${resumo?.totalRecebido.toFixed(2) ?? "0,00"}</strong>Total recebido</div>
+          <div class="resumo-item"><strong>${resumo?.quantidadeSaidas ?? 0}</strong>Saídas</div>
+          <div class="resumo-item"><strong>R$ ${resumo?.valorMedio.toFixed(2) ?? "0,00"}</strong>Valor médio</div>
+        </div>
+        ${porTipo.length > 0 && total > 0 ? `
+        <div class="graficos">
+          <div class="grafico-pizza" aria-hidden="true"></div>
+          <div class="grafico-legenda">
+            ${porTipo.map((p, i) => {
+              const pct = total > 0 ? (p.valor / total) * 100 : 0;
+              return `<span class="legenda-item"><span class="legenda-cor" style="background:${cores[i % cores.length]}"></span>${p.tipo}: ${pct.toFixed(1)}% (R$ ${p.valor.toFixed(2)})</span>`;
+            }).join("")}
+          </div>
+        </div>
+        ` : ""}
+        <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Movimentação (${entradas.length} registros)</h2>
+        <table>
+          <thead><tr><th>Placa</th><th>Tipo</th><th>Vaga</th><th>Entrada</th><th>Saída</th><th>Tempo</th><th>Valor</th><th>Pagamento</th></tr></thead>
+          <tbody>
+            ${entradas.map((e) => `
+              <tr>
+                <td>${e.placa}</td>
+                <td>${e.tipo}</td>
+                <td>${e.vaga_numero ?? "-"}</td>
+                <td>${formatarDataBR(e.entrada_em)}</td>
+                <td>${formatarDataBR(e.saida_em)}</td>
+                <td>${tempoMinutos(e.entrada_em, e.saida_em)} min</td>
+                <td>R$ ${(e.valor_pago ?? 0).toFixed(2)}</td>
+                <td>${labelPagamento(e.tipo_pagamento, e.tipo)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        <p style="margin-top: 1rem; font-size: 0.8rem; color: #64748b;">Impresso em ${new Date().toLocaleString("pt-BR")}</p>
+      </body>
+      </html>
+    `);
+    janela.document.close();
+    janela.focus();
+    setTimeout(() => {
+      janela.print();
+      janela.close();
+    }, 300);
   }
 
   const maxValor = Math.max(
@@ -172,6 +285,15 @@ export function RelatoriosClient() {
           >
             Exportar CSV
           </button>
+          <button
+            type="button"
+            className="dash-btn"
+            style={{ background: "#dc2626" }}
+            onClick={handleImprimir}
+            disabled={carregando || entradas.length === 0}
+          >
+            Imprimir / PDF
+          </button>
         </div>
       </div>
 
@@ -204,6 +326,32 @@ export function RelatoriosClient() {
             <div className="relatorios-graficos dash-form-card">
               <h2>Por tipo de pagamento</h2>
               <div className="relatorios-graficos-grid">
+                <div className="relatorio-grafico-pizza-wrap">
+                  <div
+                    className="relatorio-grafico-pizza"
+                    style={{
+                      background: `conic-gradient(${(() => {
+                        const porTipoPizza = resumo.porTipoPagamento.filter((p) => p.valor > 0);
+                        const totalPizza = resumo.totalRecebido || 1;
+                        if (porTipoPizza.length === 0 || totalPizza <= 0) return "transparent 0% 100%";
+                        const cores = ["#0ea5e9", "#10b981", "#f59e0b", "#8b5cf6", "#64748b"];
+                        let acc = 0;
+                        return porTipoPizza
+                          .map((p, i) => {
+                            const pct = (p.valor / totalPizza) * 100;
+                            const start = acc;
+                            acc += pct;
+                            return `${cores[i % cores.length]} ${start}% ${acc}%`;
+                          })
+                          .join(", ");
+                      })()})`,
+                    }}
+                    aria-hidden
+                  />
+                  <span className="relatorio-grafico-pizza-center">
+                    R$ {(resumo.totalRecebido ?? 0).toFixed(0)}
+                  </span>
+                </div>
                 <div className="relatorio-grafico-barras">
                   {resumo.porTipoPagamento.map((p) => (
                     <div key={p.tipo} className="grafico-barra-item">
