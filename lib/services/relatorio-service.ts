@@ -128,13 +128,11 @@ export async function buscarRelatorio(
 
   const porTipoPagamento = tiposPagamento.map((tipo) => {
     const itensEntrada = lista.filter((e) => e.tipo_pagamento === tipo);
-    const itensPagamento = pagamentosMensal.filter((p) => p.forma_pagamento === tipo);
     const valorEntrada = itensEntrada.reduce((s, e) => s + (e.valor_pago ?? 0), 0);
-    const valorPagamento = itensPagamento.reduce((s, p) => s + p.valor, 0);
     return {
       tipo: LABELS_PAGAMENTO_FULL[tipo] ?? tipo,
-      valor: valorEntrada + valorPagamento,
-      quantidade: itensEntrada.length + itensPagamento.length,
+      valor: valorEntrada,
+      quantidade: itensEntrada.length,
     };
   });
 
