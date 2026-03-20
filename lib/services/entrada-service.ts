@@ -1,19 +1,12 @@
 import { createClient } from "@/lib/supabase/client";
 import type { TipoVeiculo } from "@/lib/types";
 import { validarPlaca, normalizarPlaca } from "@/lib/utils/placa";
+import {
+  obterParametrosPreco,
+  calcularValorRotativo as calcValor,
+} from "@/lib/services/preco-service";
 
 export type TipoPagamento = "dinheiro" | "cartao_debito" | "cartao_credito" | "pix";
-
-function calcularValorRotativo(
-  entradaEm: Date,
-  valorHora: number,
-  fracaoMin: number
-): number {
-  const saidaEm = new Date();
-  const diffMin = Math.ceil((saidaEm.getTime() - entradaEm.getTime()) / 60000);
-  const fracoes = Math.max(1, Math.ceil(diffMin / fracaoMin));
-  return (valorHora / (60 / fracaoMin)) * fracoes;
-}
 
 export async function getVagasDisponiveis(): Promise<number[]> {
   const supabase = createClient();
@@ -109,17 +102,14 @@ export async function calcularSaida(placa: string): Promise<{ ok: true; preview:
 
   if (!entrada) return { ok: false, error: "Entrada não encontrada" };
 
-  const { data: config } = await supabase.from("config").select("*").single();
-  const valorHora = config?.valor_hora ?? 5;
-  const fracaoMin = config?.fracao_minima_minutos ?? 15;
-
   const entradaEm = new Date(entrada.entrada_em);
   const saidaEm = new Date();
+  const { valorHora, fracaoMin } = await obterParametrosPreco(saidaEm);
   const diffMin = Math.ceil((saidaEm.getTime() - entradaEm.getTime()) / 60000);
 
   let valorPago = 0;
   if (entrada.tipo === "rotativo") {
-    valorPago = calcularValorRotativo(entradaEm, valorHora, fracaoMin);
+    valorPago = calcValor(entradaEm, saidaEm, valorHora, fracaoMin);
   }
 
   return {
@@ -147,13 +137,12 @@ export async function registrarSaida(placa: string, tipoPagamento?: TipoPagament
 
   if (!entrada) return { ok: false, error: "Entrada não encontrada" };
 
-  const { data: config } = await supabase.from("config").select("*").single();
-  const valorHora = config?.valor_hora ?? 5;
-  const fracaoMin = config?.fracao_minima_minutos ?? 15;
+  const saidaEm = new Date();
+  const { valorHora, fracaoMin } = await obterParametrosPreco(saidaEm);
 
   let valorPago: number | null = null;
   if (entrada.tipo === "rotativo") {
-    valorPago = calcularValorRotativo(new Date(entrada.entrada_em), valorHora, fracaoMin);
+    valorPago = calcValor(new Date(entrada.entrada_em), saidaEm, valorHora, fracaoMin);
   }
 
   const updateData: Record<string, unknown> = {

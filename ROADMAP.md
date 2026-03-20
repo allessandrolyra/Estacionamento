@@ -2,7 +2,7 @@
 
 ## Processo
 
-**Marco:** ao final de cada fase, sempre fazer deploy. Ver `DEPLOY.md`.
+**Marco:** disponibiliza o comando de deploy para você executar — ao final de cada fase ou quando houver atualizações necessárias e autorizadas. Ver `DEPLOY.md`.
 
 ---
 
@@ -13,7 +13,7 @@
 | 1 | Relatórios | ✅ Concluído | — |
 | 2 | Consulta por Placa | ✅ Concluído | — |
 | 3 | Fechamento de caixa + Relatório impressão + Ajuste vagas | ✅ Concluído | — |
-| 4 | Múltiplas tabelas de preço | 📋 Planejado | Médio |
+| 4 | Múltiplas tabelas de preço | ✅ Concluído | — |
 | 5 | Convênios | 📋 Planejado | Médio |
 | 6 | Checklist de avarias | 📋 Planejado | Baixo |
 | 7 | NF-e | 📋 Planejado | Alto |
@@ -88,13 +88,49 @@ Permitir que o operador/admin faça fechamento de caixa ao final do turno/dia e 
 
 ---
 
+## Fase 4 — Múltiplas tabelas de preço (detalhada)
+
+### 4.1 Objetivo
+
+Permitir diferentes valores conforme horário (comercial vs noturno) e dia da semana (fim de semana).
+
+### 4.2 Funcionalidades
+
+| Item | Descrição |
+|------|-----------|
+| **Tabelas de preço** | Comercial (ex: 6h–22h), Noturno (22h–6h), Fim de semana |
+| **Configuração** | Admin define valor_hora e fracao_min por regime |
+| **Cálculo** | Ao dar saída, sistema aplica o regime vigente no momento (ou proporcional se cruzar períodos) |
+| **Compatibilidade** | Manter valor atual como padrão; migração suave |
+
+### 4.3 Regras de negócio
+
+- **Comercial:** segunda–sexta, 6h–22h
+- **Noturno:** segunda–sexta, 22h–6h
+- **Fim de semana:** sábado e domingo (valor único ou comercial/noturno)
+- **Prioridade:** se houver sobreposição, usar a mais específica
+- **Fração mínima:** pode variar por regime (ex: noturno 30 min)
+
+### 4.4 Critérios de aceite
+
+- [ ] Admin configura tabelas de preço em Config
+- [ ] Cálculo de saída usa regime correto (comercial/noturno/fim de semana)
+- [ ] Relatórios e fechamento refletem valores corretos
+- [ ] Sistema funciona sem tabelas customizadas (fallback para valor único)
+
+### 4.5 Estimativa
+
+| Tarefa | Esforço |
+|--------|---------|
+| Migration: tabela preco_regimes | 1h |
+| Lógica de cálculo por regime | 2–3h |
+| Tela Config: CRUD regimes | 2h |
+| Testes e ajustes | 1–2h |
+| **Total** | **6–8h** |
+
+---
+
 ## Fases futuras (resumo)
-
-### Fase 4 — Múltiplas tabelas de preço
-
-- Horário comercial vs noturno
-- Fim de semana
-- Descontos por período
 
 ### Fase 5 — Convênios
 

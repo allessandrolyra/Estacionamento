@@ -2,11 +2,11 @@
 
 ## Regra do Marco
 
-**Ao final de cada fase, sempre fazer deploy.** Combinado.
+**Marco disponibiliza o comando** para você executar — ao final de cada fase ou quando houver atualizações necessárias e autorizadas no sistema. Combinado.
 
 ---
 
-## Comandos padrão (copiar e colar)
+## Comando para você executar (copie e rode)
 
 ```bash
 cd "c:\01. Foursys\06. BMAD Cursor\estacionamento"
@@ -17,14 +17,16 @@ git push origin main
 
 ---
 
-## Deploy desta fase (Fase 3 — Fechamento de caixa)
+## Deploy desta fase (Fase 4 — Múltiplas tabelas de preço)
 
 ```bash
 cd "c:\01. Foursys\06. BMAD Cursor\estacionamento"
 git add .
-git commit -m "feat: Fase 3 - Fechamento de caixa, relatório impressão, ajuste seletor vagas"
+git commit -m "feat: Fase 4 - Múltiplas tabelas de preço (comercial, noturno, fim de semana)"
 git push origin main
 ```
+
+**Antes:** executar migration 008 no Supabase SQL Editor.
 
 ---
 
@@ -64,6 +66,7 @@ Se ainda não aplicou, execute no SQL Editor do Supabase (em ordem):
 
 1. `supabase/migrations/006_tipo_pagamento.sql`
 2. `supabase/migrations/007_ajustes_wagner.sql`
+3. `supabase/migrations/008_preco_regimes.sql`
 
 ---
 
