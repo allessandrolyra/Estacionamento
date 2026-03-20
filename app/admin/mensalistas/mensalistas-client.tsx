@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { validarPlaca, normalizarPlaca } from "@/lib/utils/placa";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 interface Mensalista {
   id: string;
@@ -93,6 +94,10 @@ export function MensalistasClient({ initial }: { initial: Mensalista[] }) {
           <button type="submit" style={{ padding: "0.5rem 1rem", background: "#2563eb", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}>
             Cadastrar
           </button>
+          <FeedbackMessage
+            message={msg}
+            type={msg === "Cadastrado!" ? "success" : "error"}
+          />
         </form>
       </div>
 
@@ -131,8 +136,6 @@ export function MensalistasClient({ initial }: { initial: Mensalista[] }) {
         </table>
         {mensalistas.length === 0 && <p style={{ padding: "1rem", color: "#666" }}>Nenhum mensalista</p>}
       </div>
-
-      {msg && <p style={{ marginTop: "1rem", padding: "0.5rem", background: "#f0fdf4", borderRadius: "4px" }}>{msg}</p>}
     </div>
   );
 }

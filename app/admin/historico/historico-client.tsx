@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { buscarHistoricoPorPlaca, type EntradaHistorico } from "@/lib/services/historico-service";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 function formatarDataBR(d: string) {
   return new Date(d).toLocaleString("pt-BR", {
@@ -81,14 +82,9 @@ export function HistoricoClient() {
           >
             {carregando ? "Buscando..." : "Buscar"}
           </button>
+          <FeedbackMessage message={erro} type="error" />
         </form>
       </div>
-
-      {erro && (
-        <div className="dash-msg error" style={{ marginTop: "1rem" }}>
-          {erro}
-        </div>
-      )}
 
       {buscou && !carregando && (
         <div className="dash-form-card" style={{ marginTop: "1.5rem" }}>

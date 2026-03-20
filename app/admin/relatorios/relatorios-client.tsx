@@ -8,6 +8,7 @@ import {
   type EntradaRelatorio,
   type ResumoRelatorio,
 } from "@/lib/services/relatorio-service";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 const ITENS_POR_PAGINA = 20;
 
@@ -174,11 +175,7 @@ export function RelatoriosClient() {
         </div>
       </div>
 
-      {erro && (
-        <div className="dash-msg error" style={{ marginBottom: "1rem" }}>
-          {erro}
-        </div>
-      )}
+      <FeedbackMessage message={erro} type="error" />
 
       {resumo && (
         <div className="relatorios-resumo">

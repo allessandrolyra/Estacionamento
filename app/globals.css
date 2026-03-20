@@ -444,6 +444,63 @@ button, a, input, select {
   color: #b91c1c;
 }
 
+/* Feedback inline — suave, próximo ao botão (NN/G) */
+.feedback-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: feedbackSlideIn 0.3s ease-out;
+}
+
+.feedback-message__icon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.feedback-message--success {
+  background: var(--color-success-bg);
+  color: #047857;
+}
+
+.feedback-message--success .feedback-message__icon {
+  background: #10b981;
+  color: white;
+}
+
+.feedback-message--error {
+  background: var(--color-danger-bg);
+  color: #b91c1c;
+}
+
+.feedback-message--error .feedback-message__icon {
+  background: #ef4444;
+  color: white;
+}
+
+@keyframes feedbackSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .dash-valor-pago {
   margin-bottom: 0.5rem;
   font-weight: 700;

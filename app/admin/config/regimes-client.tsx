@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 interface Regime {
   id: string;
@@ -64,11 +65,10 @@ export function RegimesClient({ regimes: initial }: Props) {
           Nenhum regime configurado. Execute a migration 008 no Supabase.
         </p>
       )}
-      {msg && (
-        <p className={`dash-msg ${msg.includes("salvo") ? "success" : "error"}`} style={{ marginTop: "1rem" }}>
-          {msg}
-        </p>
-      )}
+      <FeedbackMessage
+        message={msg}
+        type={/salvo|Salvo|Cadastrado/.test(msg) ? "success" : "error"}
+      />
     </div>
   );
 }

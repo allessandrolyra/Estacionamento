@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -59,7 +60,7 @@ function LoginForm() {
             required
           />
         </div>
-        {error && <p className="login-error">{error}</p>}
+        <FeedbackMessage message={error} type="error" />
         <button type="submit" className="login-btn">Entrar</button>
       </form>
     </div>

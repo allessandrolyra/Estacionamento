@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 interface Props {
   id?: string;
@@ -75,12 +76,8 @@ export function ConfigClient({ id, totalVagas, valorHora, fracaoMinima }: Props)
         <button type="submit" className="dash-btn dash-btn-primary">
           Salvar
         </button>
+        <FeedbackMessage message={msg} type={msg === "Salvo!" ? "success" : "error"} />
       </form>
-      {msg && (
-        <p className={`dash-msg ${msg === "Salvo!" ? "success" : "error"}`} style={{ marginTop: "1rem" }}>
-          {msg}
-        </p>
-      )}
     </div>
   );
 }

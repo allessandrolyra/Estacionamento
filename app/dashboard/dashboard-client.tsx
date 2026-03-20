@@ -11,6 +11,7 @@ import {
 import type { TipoVeiculo } from "@/lib/types";
 import type { TipoPagamento, SaidaPreview } from "@/lib/services/entrada-service";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 interface Props {
   total: number;
@@ -44,7 +45,8 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
   const [placaSaida, setPlacaSaida] = useState("");
   const [saidaPreview, setSaidaPreview] = useState<SaidaPreview | null>(null);
   const [tipoPagamento, setTipoPagamento] = useState<TipoPagamento>("dinheiro");
-  const [msg, setMsg] = useState("");
+  const [msgEntrada, setMsgEntrada] = useState("");
+  const [msgSaida, setMsgSaida] = useState("");
 
   useEffect(() => {
     setVagas({ total, ocupadas, disponiveis, lotado });
@@ -98,49 +100,49 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
 
   async function handleEntrada(e: React.FormEvent) {
     e.preventDefault();
-    setMsg("");
+    setMsgEntrada("");
     const vaga = vagaEscolhida === "auto" ? undefined : vagaEscolhida;
     const r = await registrarEntrada(placaEntrada.trim(), tipoEntrada, vaga);
     if (r.ok) {
       carregarEntradasAtivas();
       recarregarVagasDisponiveis();
       const lado = r.vaga && r.vaga <= 40 ? "esquerdo" : "direito";
-      setMsg(r.vaga ? `Entrada registrada! Vaga ${r.vaga} (${lado})` : "Entrada registrada!");
+      setMsgEntrada(r.vaga ? `Entrada registrada! Vaga ${r.vaga} (${lado})` : "Entrada registrada!");
       setPlacaEntrada("");
     } else {
-      setMsg(r.error || "Erro");
+      setMsgEntrada(r.error || "Erro");
     }
   }
 
   async function handleConsultarSaida(e: React.FormEvent) {
     e.preventDefault();
-    setMsg("");
+    setMsgSaida("");
     setSaidaPreview(null);
     const r = await calcularSaida(placaSaida.trim());
     if (r.ok) {
       setSaidaPreview(r.preview);
     } else {
-      setMsg(r.error || "Erro");
+      setMsgSaida(r.error || "Erro");
     }
   }
 
   async function handleConfirmarSaida(e: React.FormEvent) {
     e.preventDefault();
     if (!saidaPreview) return;
-    setMsg("");
+    setMsgSaida("");
     const r = await registrarSaida(saidaPreview.placa, saidaPreview.valorPago > 0 ? tipoPagamento : undefined);
     if (r.ok) {
-      setMsg("Saída registrada!");
+      setMsgSaida("Saída registrada!");
       setPlacaSaida("");
       setSaidaPreview(null);
     } else {
-      setMsg(r.error || "Erro");
+      setMsgSaida(r.error || "Erro");
     }
   }
 
   function cancelarSaida() {
     setSaidaPreview(null);
-    setMsg("");
+    setMsgSaida("");
   }
 
   return (
@@ -219,6 +221,10 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
             >
               Registrar Entrada
             </button>
+            <FeedbackMessage
+              message={msgEntrada}
+              type={msgEntrada && /registrada|Salvo|Cadastrado/.test(msgEntrada) ? "success" : "error"}
+            />
           </form>
         </div>
 
@@ -240,6 +246,10 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
               <button type="submit" className="dash-btn dash-btn-saida">
                 Consultar valor
               </button>
+              <FeedbackMessage
+                message={msgSaida}
+                type={msgSaida && /registrada|Salvo|Cadastrado/.test(msgSaida) ? "success" : "error"}
+              />
             </form>
           ) : (
             <form onSubmit={handleConfirmarSaida}>
@@ -272,6 +282,10 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
                   Cancelar
                 </button>
               </div>
+              <FeedbackMessage
+                message={msgSaida}
+                type={msgSaida && /registrada|Salvo|Cadastrado/.test(msgSaida) ? "success" : "error"}
+              />
             </form>
           )}
         </div>
@@ -306,10 +320,6 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
           </div>
         )}
       </div>
-
-      {msg && (
-        <p className={`dash-msg ${msg.includes("Erro") ? "error" : "success"}`}>{msg}</p>
-      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createUser, updateUserRole, deleteUser, resetUserPassword, type Role } from "./actions";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 interface User {
   id: string;
@@ -126,6 +127,10 @@ export function UsuariosClient({ users, currentUserId }: Props) {
           <button type="submit" className="dash-btn dash-btn-entrada" disabled={loading}>
             {loading ? "Criando..." : "Criar usuário"}
           </button>
+          <FeedbackMessage
+            message={msg}
+            type={/Erro|não pode|Senha deve/.test(msg) ? "error" : "success"}
+          />
         </form>
       </div>
 
@@ -188,10 +193,6 @@ export function UsuariosClient({ users, currentUserId }: Props) {
           <p className="admin-usuarios-empty">Nenhum usuário cadastrado.</p>
         )}
       </div>
-
-      {msg && (
-        <p className={`dash-msg ${msg.includes("Erro") ? "error" : "success"}`}>{msg}</p>
-      )}
     </div>
   );
 }

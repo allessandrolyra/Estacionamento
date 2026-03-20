@@ -7,6 +7,7 @@ import {
   type ResumoRelatorio,
 } from "@/lib/services/relatorio-service";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 function formatarDataBR(d: string) {
   return new Date(d).toLocaleString("pt-BR", {
@@ -148,11 +149,7 @@ export function FechamentoClient() {
         </div>
       </div>
 
-      {erro && (
-        <div className="dash-msg error" style={{ marginTop: "1rem" }}>
-          {erro}
-        </div>
-      )}
+      <FeedbackMessage message={erro} type="error" />
 
       {carregando && (
         <p style={{ marginTop: "1rem", color: "#64748b" }}>Carregando...</p>
