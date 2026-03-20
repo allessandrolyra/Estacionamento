@@ -13,6 +13,7 @@
 | **Stack** | Next.js 14 + Supabase + Vercel (100% free tier) |
 | **Repositório** | https://github.com/allessandrolyra/Estacionamento.git |
 | **Branch** | `main` |
+| **Acesso online** | [https://estacionamento-ivory.vercel.app/](https://estacionamento-ivory.vercel.app/) |
 
 ---
 
@@ -110,13 +111,17 @@
 
 ## 5. Como Continuar Amanhã
 
-### 5.1 Abrir o projeto
+### 5.1 Acesso online
+
+**Produção:** [https://estacionamento-ivory.vercel.app/](https://estacionamento-ivory.vercel.app/)
+
+### 5.2 Abrir o projeto
 
 ```
 cd "c:\01. Foursys\06. BMAD Cursor\estacionamento"
 ```
 
-### 5.2 Rodar localmente
+### 5.3 Rodar localmente
 
 ```bash
 npm install
@@ -125,7 +130,7 @@ npm run dev
 
 Acesse http://localhost:3000
 
-### 5.3 Deploy (quando houver alterações)
+### 5.4 Deploy (quando houver alterações)
 
 ```bash
 cd "c:\01. Foursys\06. BMAD Cursor\estacionamento"
@@ -136,7 +141,7 @@ git push origin main
 
 Vercel faz deploy automático em cada push.
 
-### 5.4 Migrations pendentes no Supabase
+### 5.5 Migrations pendentes no Supabase
 
 Se a migration 010 não foi aplicada, execute no SQL Editor do Supabase:
 

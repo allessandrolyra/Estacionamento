@@ -2,6 +2,12 @@
 
 Sistema web para controle de entrada/saída, vagas e mensalistas. Stack: Next.js + Supabase + Vercel (100% free tier).
 
+## Acesso online
+
+**Aplicação em produção:** [https://estacionamento-ivory.vercel.app/](https://estacionamento-ivory.vercel.app/)
+
+- Login: `admin@estacionamento.local` | Senha: `Admin@123` (se o admin padrão foi criado)
+
 ## Setup
 
 ### 1. Supabase
