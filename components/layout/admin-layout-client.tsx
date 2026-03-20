@@ -16,7 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { LogoutButton } from "@/app/dashboard/logout-button";
+import { SessionActions } from "@/components/ui/session-actions";
 
 const LINKS = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -62,7 +62,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <div className="admin-sidebar-footer">
-          <LogoutButton />
+          <SessionActions />
         </div>
       </aside>
 
@@ -92,7 +92,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <div className="admin-drawer-footer">
-          <LogoutButton />
+          <SessionActions />
         </div>
       </div>
 

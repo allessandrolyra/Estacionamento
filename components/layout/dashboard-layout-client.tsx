@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Car, MapPin, Receipt, LayoutDashboard, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { LogoutButton } from "@/app/dashboard/logout-button";
+import { SessionActions } from "@/components/ui/session-actions";
 
 interface Props {
   isAdmin: boolean;
@@ -54,7 +54,7 @@ export function DashboardLayoutClient({ isAdmin, children }: Props) {
           ))}
         </nav>
         <div className="admin-sidebar-footer">
-          <LogoutButton />
+          <SessionActions />
         </div>
       </aside>
 
@@ -84,7 +84,7 @@ export function DashboardLayoutClient({ isAdmin, children }: Props) {
           ))}
         </nav>
         <div className="admin-drawer-footer">
-          <LogoutButton />
+          <SessionActions />
         </div>
       </div>
 

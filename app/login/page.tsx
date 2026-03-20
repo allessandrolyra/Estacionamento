@@ -1,14 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [trocarMsg, setTrocarMsg] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setTrocarMsg(searchParams.get("trocar") === "1");
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,6 +36,9 @@ export default function LoginPage() {
     <div className="login-page">
       <form onSubmit={handleSubmit} className="login-card">
         <h1>Estacionamento</h1>
+        {trocarMsg && (
+          <p className="login-trocar-msg">Faça login com outro usuário</p>
+        )}
         <div className="login-field">
           <label>Email</label>
           <input
@@ -54,5 +63,20 @@ export default function LoginPage() {
         <button type="submit" className="login-btn">Entrar</button>
       </form>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="login-page">
+        <div className="login-card">
+          <h1>Estacionamento</h1>
+          <p style={{ color: "var(--color-muted)" }}>Carregando...</p>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

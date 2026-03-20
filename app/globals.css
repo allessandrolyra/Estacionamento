@@ -516,6 +516,15 @@ button, a, input, select {
   margin-bottom: 0.5rem;
 }
 
+.login-trocar-msg {
+  color: var(--color-accent);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: rgba(14, 165, 233, 0.1);
+  border-radius: var(--radius-sm);
+}
+
 .login-btn {
   width: 100%;
   padding: 0.65rem;
@@ -929,9 +938,43 @@ button, a, input, select {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.admin-sidebar-footer .dash-logout-btn {
-  width: 100%;
+.session-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.session-btn {
+  display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: transparent;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.session-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: white;
+}
+
+.session-btn-switch {
+  border-color: rgba(14, 165, 233, 0.6);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.session-btn-switch:hover {
+  background: rgba(14, 165, 233, 0.2);
+  border-color: var(--color-accent);
 }
 
 .admin-main {
