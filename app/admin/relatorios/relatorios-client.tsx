@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import {
   buscarRelatorio,
-  exportarCSV,
+  exportarCSVCompleto,
   type FiltrosRelatorio,
   type EntradaRelatorio,
   type ResumoRelatorio,
+  type PagamentoMensalRelatorio,
 } from "@/lib/services/relatorio-service";
 import { FeedbackMessage } from "@/components/ui/feedback-message";
 
@@ -53,6 +54,7 @@ export function RelatoriosClient() {
     tipoVeiculo: "todos",
   });
   const [entradas, setEntradas] = useState<EntradaRelatorio[]>([]);
+  const [pagamentosMensal, setPagamentosMensal] = useState<PagamentoMensalRelatorio[]>([]);
   const [resumo, setResumo] = useState<ResumoRelatorio | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
@@ -62,8 +64,9 @@ export function RelatoriosClient() {
     setCarregando(true);
     setErro("");
     try {
-      const { entradas: e, resumo: r } = await buscarRelatorio(filtros);
+      const { entradas: e, pagamentosMensal: pm, resumo: r } = await buscarRelatorio(filtros);
       setEntradas(e);
+      setPagamentosMensal(pm);
       setResumo(r);
     } catch (err) {
       setErro(err instanceof Error ? err.message : "Erro ao carregar");
@@ -85,7 +88,7 @@ export function RelatoriosClient() {
   const totalPaginas = Math.ceil(entradas.length / ITENS_POR_PAGINA);
 
   function handleExportar() {
-    const csv = exportarCSV(entradas);
+    const csv = exportarCSVCompleto(entradas, pagamentosMensal);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -184,6 +187,24 @@ export function RelatoriosClient() {
             `).join("")}
           </tbody>
         </table>
+        ${pagamentosMensal.length > 0 ? `
+        <h2 style="font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.5rem;">Pagamentos de mensalistas (${pagamentosMensal.length})</h2>
+        <table>
+          <thead><tr><th>Nome</th><th>Placa</th><th>Referência</th><th>Valor</th><th>Forma</th><th>Data pagamento</th></tr></thead>
+          <tbody>
+            ${pagamentosMensal.map((p) => `
+              <tr>
+                <td>${p.mensalista_nome}</td>
+                <td>${p.placa}</td>
+                <td>${p.referencia}</td>
+                <td>R$ ${p.valor.toFixed(2)}</td>
+                <td>${p.forma_pagamento ? (p.forma_pagamento === "cartao_debito" ? "Cartão Débito" : p.forma_pagamento === "cartao_credito" ? "Cartão Crédito" : p.forma_pagamento) : "-"}</td>
+                <td>${formatarDataBR(p.pago_em)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        ` : ""}
         <p style="margin-top: 1rem; font-size: 0.8rem; color: #64748b;">Impresso em ${new Date().toLocaleString("pt-BR")}</p>
       </body>
       </html>
@@ -281,7 +302,7 @@ export function RelatoriosClient() {
             className="dash-btn"
             style={{ background: "#059669" }}
             onClick={handleExportar}
-            disabled={carregando || entradas.length === 0}
+            disabled={carregando || (entradas.length === 0 && pagamentosMensal.length === 0)}
           >
             Exportar CSV
           </button>
@@ -290,7 +311,7 @@ export function RelatoriosClient() {
             className="dash-btn"
             style={{ background: "#dc2626" }}
             onClick={handleImprimir}
-            disabled={carregando || entradas.length === 0}
+            disabled={carregando || (entradas.length === 0 && pagamentosMensal.length === 0)}
           >
             Imprimir / PDF
           </button>
@@ -469,7 +490,7 @@ export function RelatoriosClient() {
         {entradas.length === 0 && !carregando && (
           <div className="dash-empty-state">
             <span className="dash-empty-state-icon" aria-hidden>📊</span>
-            <p style={{ margin: 0 }}>Nenhum registro no período</p>
+            <p style={{ margin: 0 }}>Nenhuma movimentação no período</p>
           </div>
         )}
         {totalPaginas > 1 && (
@@ -498,6 +519,46 @@ export function RelatoriosClient() {
           </div>
         )}
       </div>
+
+      {pagamentosMensal.length > 0 && (
+        <div className="dash-form-card" style={{ marginTop: "1.5rem" }}>
+          <h2>Pagamentos de mensalistas ({pagamentosMensal.length})</h2>
+          <div className="relatorios-table-wrap">
+            <table className="admin-usuarios-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Placa</th>
+                  <th>Referência</th>
+                  <th>Valor</th>
+                  <th>Forma</th>
+                  <th>Data pagamento</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pagamentosMensal.map((p) => (
+                  <tr key={p.id}>
+                    <td>{p.mensalista_nome}</td>
+                    <td>{p.placa}</td>
+                    <td>{p.referencia}</td>
+                    <td>R$ {p.valor.toFixed(2)}</td>
+                    <td>
+                      {p.forma_pagamento
+                        ? p.forma_pagamento === "cartao_debito"
+                          ? "Cartão Débito"
+                          : p.forma_pagamento === "cartao_credito"
+                            ? "Cartão Crédito"
+                            : p.forma_pagamento
+                        : "-"}
+                    </td>
+                    <td>{formatarDataBR(p.pago_em)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

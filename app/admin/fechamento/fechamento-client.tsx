@@ -5,6 +5,7 @@ import {
   buscarRelatorio,
   type EntradaRelatorio,
   type ResumoRelatorio,
+  type PagamentoMensalRelatorio,
 } from "@/lib/services/relatorio-service";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { FeedbackMessage } from "@/components/ui/feedback-message";
@@ -41,6 +42,7 @@ export function FechamentoClient() {
   const hoje = new Date().toISOString().slice(0, 10);
   const [data, setData] = useState(hoje);
   const [entradas, setEntradas] = useState<EntradaRelatorio[]>([]);
+  const [pagamentosMensal, setPagamentosMensal] = useState<PagamentoMensalRelatorio[]>([]);
   const [resumo, setResumo] = useState<ResumoRelatorio | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
@@ -54,6 +56,7 @@ export function FechamentoClient() {
         dataFinal: data,
       });
       setEntradas(r.entradas);
+      setPagamentosMensal(r.pagamentosMensal);
       setResumo(r.resumo);
     } catch (err) {
       setErro(err instanceof Error ? err.message : "Erro ao carregar");
@@ -119,6 +122,24 @@ export function FechamentoClient() {
             `).join("")}
           </tbody>
         </table>
+        ${pagamentosMensal.length > 0 ? `
+        <h2 style="margin-top: 1.5rem; font-size: 1.1rem;">Pagamentos de mensalistas (${pagamentosMensal.length})</h2>
+        <table>
+          <thead><tr><th>Nome</th><th>Placa</th><th>Referência</th><th>Valor</th><th>Forma</th><th>Data</th></tr></thead>
+          <tbody>
+            ${pagamentosMensal.map((p) => `
+              <tr>
+                <td>${p.mensalista_nome}</td>
+                <td>${p.placa}</td>
+                <td>${p.referencia}</td>
+                <td>R$ ${p.valor.toFixed(2)}</td>
+                <td>${p.forma_pagamento ?? "-"}</td>
+                <td>${formatarDataBR(p.pago_em)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        ` : ""}
         <p style="margin-top: 1.5rem; font-size: 0.85rem; color: #64748b;">Impresso em ${new Date().toLocaleString("pt-BR")}</p>
       </body>
       </html>
@@ -205,7 +226,7 @@ export function FechamentoClient() {
                 className="dash-btn dash-btn-primary"
                 style={{ width: "auto", minWidth: "140px" }}
                 onClick={handleImprimir}
-                disabled={carregando || entradas.length === 0}
+                disabled={carregando || (entradas.length === 0 && pagamentosMensal.length === 0)}
               >
                 Imprimir
               </button>
