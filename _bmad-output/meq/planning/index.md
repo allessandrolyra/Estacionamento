@@ -4,11 +4,12 @@
 
 ---
 
-## Histórico de Sessão (retomada de trabalho)
+## Histórico e Segurança
 
 | Documento | Descrição |
 |-----------|-----------|
 | [**HISTORICO-MEQ.md**](../HISTORICO-MEQ.md) | Changelog completo, o que foi feito, como continuar amanhã |
+| [**SEGURANCA-ASSESSMENT.md**](../SEGURANCA-ASSESSMENT.md) | Avaliação de segurança para o time de segurança |
 
 ---
 

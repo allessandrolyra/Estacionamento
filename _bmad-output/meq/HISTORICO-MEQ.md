@@ -161,6 +161,7 @@ supabase/migrations/010_mensalistas_cobranca.sql
 | Arquitetura | `_bmad-output/meq/planning/architecture-estacionamento.md` |
 | Epics e Stories | `_bmad-output/meq/planning/epics-stories-estacionamento.md` |
 | Revisão Diana | `_bmad-output/meq/planning/modelo-dados-diana-review.md` |
+| **Segurança** | `_bmad-output/meq/SEGURANCA-ASSESSMENT.md` — para o time de segurança |
 
 ---
 

@@ -72,6 +72,12 @@ Acesse http://localhost:3000
 - `/admin/usuarios` — Gestão de usuários (listar, criar, alterar permissões)
 - `/admin/mapa` — Mapa de vagas (admin)
 
+## Segurança
+
+Documento de avaliação para o time de segurança: `_bmad-output/meq/SEGURANCA-ASSESSMENT.md`
+
+**Importante:** Troque a senha do admin padrão após o primeiro login em produção.
+
 ## Roadmap
 
 Veja `ROADMAP.md` — fases planejadas e escopo detalhado (Fechamento de caixa, Múltiplas tabelas, Convênios, etc.).
