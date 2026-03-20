@@ -6,7 +6,7 @@ Sistema web para controle de entrada/saída, vagas e mensalistas. Stack: Next.js
 
 **Aplicação em produção:** [https://estacionamento-ivory.vercel.app/](https://estacionamento-ivory.vercel.app/)
 
-- Login: `admin@estacionamento.local
+Loging: admin@local.env
 
 ## Setup
 
