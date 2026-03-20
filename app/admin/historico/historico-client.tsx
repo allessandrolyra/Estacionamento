@@ -57,7 +57,7 @@ export function HistoricoClient() {
 
   return (
     <div className="dash-container">
-      <h1 style={{ marginBottom: "1.5rem" }}>Histórico por Placa</h1>
+      <h1 style={{ marginBottom: "1.5rem" }}>Consulta por Placa</h1>
 
       <div className="dash-form-card">
         <h2>Buscar</h2>

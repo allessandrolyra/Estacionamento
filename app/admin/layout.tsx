@@ -26,7 +26,7 @@ export default async function AdminLayout({
           <Link href="/admin/mapa">Mapa de Vagas</Link>
           <Link href="/admin/mensalistas">Mensalistas</Link>
           <Link href="/admin/relatorios">Relatórios</Link>
-          <Link href="/admin/historico">Histórico</Link>
+          <Link href="/admin/historico">Consulta por Placa</Link>
           <Link href="/admin/config">Config</Link>
           <Link href="/admin/usuarios">Usuários</Link>
         </nav>
