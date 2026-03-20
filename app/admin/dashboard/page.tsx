@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { AutoRefresh } from "@/components/ui/auto-refresh";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +52,7 @@ export default async function AdminDashboardPage() {
   }
 
   return (
+    <AutoRefresh intervalMs={30000}>
     <div className="dash-container">
       <h1 className="page-title">Painel Admin</h1>
 
@@ -113,5 +115,6 @@ export default async function AdminDashboardPage() {
         )}
       </div>
     </div>
+    </AutoRefresh>
   );
 }

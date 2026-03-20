@@ -27,23 +27,36 @@ export async function getVagasDisponiveis(): Promise<number[]> {
   return disponiveis;
 }
 
-export async function getMapaVagas() {
+export interface VagaMapa {
+  numero: number;
+  lado: "esquerdo" | "direito";
+  placa?: string;
+  tipo?: string;
+  entrada_em?: string;
+}
+
+export async function getMapaVagas(): Promise<VagaMapa[]> {
   const supabase = createClient();
   const { data: config } = await supabase.from("config").select("total_vagas").single();
   const total = config?.total_vagas ?? 80;
 
   const { data: entradas } = await supabase
     .from("entradas")
-    .select("vaga_numero, placa, tipo")
+    .select("vaga_numero, placa, tipo, entrada_em")
     .is("saida_em", null)
     .not("vaga_numero", "is", null);
 
-  const mapa = new Map<number, { placa: string; tipo: string }>();
+  const mapa = new Map<number, { placa: string; tipo: string; entrada_em: string }>();
   (entradas ?? []).forEach((e) => {
-    if (e.vaga_numero) mapa.set(e.vaga_numero, { placa: e.placa, tipo: e.tipo });
+    if (e.vaga_numero)
+      mapa.set(e.vaga_numero, {
+        placa: e.placa,
+        tipo: e.tipo,
+        entrada_em: e.entrada_em,
+      });
   });
 
-  const vagas: { numero: number; lado: "esquerdo" | "direito"; placa?: string; tipo?: string }[] = [];
+  const vagas: VagaMapa[] = [];
   const metade = Math.ceil(total / 2);
   for (let i = 1; i <= total; i++) {
     const info = mapa.get(i);
@@ -52,6 +65,7 @@ export async function getMapaVagas() {
       lado: i <= metade ? "esquerdo" : "direito",
       placa: info?.placa,
       tipo: info?.tipo,
+      entrada_em: info?.entrada_em,
     });
   }
   return vagas;

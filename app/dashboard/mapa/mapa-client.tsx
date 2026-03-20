@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { fetchMapaCompleto } from "@/lib/services/mapa-service";
 
 interface Vaga {
   numero: number;
@@ -40,10 +41,21 @@ interface Props {
 
 export function MapaVagasClient({ vagas: initial, valorHora, fracaoMin }: Props) {
   const [vagas, setVagas] = useState(initial);
+  const [valorHoraState, setValorHoraState] = useState(valorHora);
+  const [fracaoMinState, setFracaoMinState] = useState(fracaoMin);
+
+  const refetch = useCallback(async () => {
+    const { vagas: v, valorHora: vh, fracaoMin: fm } = await fetchMapaCompleto();
+    setVagas(v);
+    setValorHoraState(vh);
+    setFracaoMinState(fm);
+  }, []);
 
   useEffect(() => {
     setVagas(initial);
-  }, [initial]);
+    setValorHoraState(valorHora);
+    setFracaoMinState(fracaoMin);
+  }, [initial, valorHora, fracaoMin]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -52,13 +64,13 @@ export function MapaVagasClient({ vagas: initial, valorHora, fracaoMin }: Props)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "entradas" },
-        () => window.location.reload()
+        refetch
       )
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [refetch]);
 
   const esquerdo = vagas.filter((v) => v.lado === "esquerdo");
   const direito = vagas.filter((v) => v.lado === "direito");
@@ -70,7 +82,7 @@ export function MapaVagasClient({ vagas: initial, valorHora, fracaoMin }: Props)
       : 0;
     const valor =
       v.entrada_em && v.tipo
-        ? calcularValor(v.entrada_em, valorHora, fracaoMin, v.tipo)
+        ? calcularValor(v.entrada_em, valorHoraState, fracaoMinState, v.tipo)
         : 0;
     const tooltipText =
       ocupada && v.entrada_em
