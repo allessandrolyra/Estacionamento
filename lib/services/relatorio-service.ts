@@ -128,13 +128,27 @@ export async function buscarRelatorio(
 
   const porTipoPagamento = tiposPagamento.map((tipo) => {
     const itensEntrada = lista.filter((e) => e.tipo_pagamento === tipo);
+    const itensPagamento = pagamentosMensal.filter((p) => p.forma_pagamento === tipo);
     const valorEntrada = itensEntrada.reduce((s, e) => s + (e.valor_pago ?? 0), 0);
+    const valorPagamento = itensPagamento.reduce((s, p) => s + p.valor, 0);
     return {
       tipo: LABELS_PAGAMENTO_FULL[tipo] ?? tipo,
-      valor: valorEntrada,
-      quantidade: itensEntrada.length,
+      valor: valorEntrada + valorPagamento,
+      quantidade: itensEntrada.length + itensPagamento.length,
     };
   });
+
+  const pagamentosSemForma = pagamentosMensal.filter(
+    (p) => !p.forma_pagamento || !tiposPagamento.includes(p.forma_pagamento as (typeof tiposPagamento)[number])
+  );
+  if (pagamentosSemForma.length > 0) {
+    const valorOutros = pagamentosSemForma.reduce((s, p) => s + p.valor, 0);
+    porTipoPagamento.push({
+      tipo: "Outros",
+      valor: valorOutros,
+      quantidade: pagamentosSemForma.length,
+    });
+  }
 
   const mensalistasIsentos = lista.filter((e) => e.tipo === "mensalista");
   if (mensalistasIsentos.length > 0) {
@@ -142,15 +156,6 @@ export async function buscarRelatorio(
       tipo: "Mensalista (isento na saída)",
       valor: 0,
       quantidade: mensalistasIsentos.length,
-    });
-  }
-
-  if (pagamentosMensal.length > 0) {
-    const valorTotalMensal = pagamentosMensal.reduce((s, p) => s + p.valor, 0);
-    porTipoPagamento.push({
-      tipo: "Mensalistas (mensalidade)",
-      valor: valorTotalMensal,
-      quantidade: pagamentosMensal.length,
     });
   }
 
