@@ -65,6 +65,7 @@ Se ainda não aplicou, execute no SQL Editor do Supabase (em ordem):
 1. `supabase/migrations/006_tipo_pagamento.sql`
 2. `supabase/migrations/007_ajustes_wagner.sql`
 3. `supabase/migrations/008_preco_regimes.sql`
+4. `supabase/migrations/009_realtime_entradas.sql` — **obrigatório para Realtime**
 
 ---
 

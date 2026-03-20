@@ -52,14 +52,19 @@ Acesse http://localhost:3000
 
 **Comandos:** veja `DEPLOY.md` — sempre que houver alterações, os comandos de deploy estão lá.
 
-## Estrutura
+## Estrutura de rotas
 
 - `/login` — Login
 - `/dashboard` — Operador: vagas, entrada, saída
+- `/dashboard/mapa` — Mapa de vagas em tempo real
 - `/admin/dashboard` — Admin: dashboard
 - `/admin/mensalistas` — Cadastro de mensalistas
-- `/admin/config` — Configuração de tarifas
+- `/admin/relatorios` — Relatórios e exportação CSV
+- `/admin/fechamento` — Fechamento de caixa e impressão
+- `/admin/historico` — Consulta por placa
+- `/admin/config` — Configuração de tarifas e regimes de preço
 - `/admin/usuarios` — Gestão de usuários (listar, criar, alterar permissões)
+- `/admin/mapa` — Mapa de vagas (admin)
 
 ## Roadmap
 
@@ -67,7 +72,10 @@ Veja `ROADMAP.md` — fases planejadas e escopo detalhado (Fechamento de caixa, 
 
 ## Documentação
 
-- Product Brief: `_bmad-output/meq/planning/product-brief-estacionamento.md`
-- PRD: `_bmad-output/meq/planning/prd-estacionamento.md`
-- Arquitetura: `_bmad-output/meq/planning/architecture-estacionamento.md`
-- Epics/Stories: `_bmad-output/meq/planning/epics-stories-estacionamento.md`
+Documentação MEQ (Time MEQ) em `_bmad-output/meq/planning/`:
+
+- **[Índice](_bmad-output/meq/planning/index.md)** — Navegação da documentação
+- [Product Brief](_bmad-output/meq/planning/product-brief-estacionamento.md)
+- [PRD](_bmad-output/meq/planning/prd-estacionamento.md)
+- [Arquitetura](_bmad-output/meq/planning/architecture-estacionamento.md)
+- [Epics e Stories](_bmad-output/meq/planning/epics-stories-estacionamento.md)

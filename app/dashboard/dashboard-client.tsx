@@ -102,6 +102,8 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
     const vaga = vagaEscolhida === "auto" ? undefined : vagaEscolhida;
     const r = await registrarEntrada(placaEntrada.trim(), tipoEntrada, vaga);
     if (r.ok) {
+      carregarEntradasAtivas();
+      recarregarVagasDisponiveis();
       const lado = r.vaga && r.vaga <= 40 ? "esquerdo" : "direito";
       setMsg(r.vaga ? `Entrada registrada! Vaga ${r.vaga} (${lado})` : "Entrada registrada!");
       setPlacaEntrada("");
