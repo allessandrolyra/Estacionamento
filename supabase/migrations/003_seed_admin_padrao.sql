@@ -1,9 +1,6 @@
 -- Migration 003: Criar usuário Admin padrão
 -- Execute no Supabase SQL Editor para criar o primeiro acesso ao sistema.
 --
--- Credenciais padrão:
---   Email: admin@estacionamento.local
---   Senha: Admin@123
 --
 -- IMPORTANTE: Altere a senha após o primeiro login (Admin > Usuários).
 
