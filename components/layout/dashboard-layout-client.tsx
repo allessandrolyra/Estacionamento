@@ -32,37 +32,43 @@ export function DashboardLayoutClient({ isAdmin, children }: Props) {
       <Link
         href={href}
         onClick={() => setDrawerOpen(false)}
-        className={`dash-nav-link ${isActive ? "active" : ""}`}
+        className={`admin-nav-link ${isActive ? "active" : ""}`}
       >
-        <Icon size={18} aria-hidden />
+        <Icon size={20} aria-hidden />
         <span>{label}</span>
       </Link>
     );
   };
 
   return (
-    <div className="dash-layout">
-      <header className="dash-header">
-        <div className="dash-header-start">
-          <div className="dash-header-nav-desktop">
-            {links.map((link) => (
-              <NavLink key={link.href} {...link} />
-            ))}
-          </div>
-          <button
-            type="button"
-            className="dash-header-toggle"
-            onClick={() => setDrawerOpen(true)}
-            aria-label="Abrir menu"
-          >
-            <Menu size={24} />
-          </button>
+    <div className="admin-layout">
+      <aside className="admin-sidebar">
+        <div className="admin-sidebar-header">
+          <Link href="/dashboard" className="admin-sidebar-brand">
+            Estacionamento
+          </Link>
         </div>
-        <LogoutButton />
-      </header>
+        <nav className="admin-sidebar-nav">
+          {links.map((link) => (
+            <NavLink key={link.href} {...link} />
+          ))}
+        </nav>
+        <div className="admin-sidebar-footer">
+          <LogoutButton />
+        </div>
+      </aside>
 
-      <div className={`dash-drawer ${drawerOpen ? "open" : ""}`}>
-        <div className="dash-drawer-header">
+      <button
+        type="button"
+        className="admin-sidebar-toggle"
+        onClick={() => setDrawerOpen(true)}
+        aria-label="Abrir menu"
+      >
+        <Menu size={24} />
+      </button>
+
+      <div className={`admin-drawer ${drawerOpen ? "open" : ""}`}>
+        <div className="admin-drawer-header">
           <span>Menu</span>
           <button
             type="button"
@@ -72,16 +78,19 @@ export function DashboardLayoutClient({ isAdmin, children }: Props) {
             <X size={22} />
           </button>
         </div>
-        <nav className="dash-drawer-nav">
+        <nav className="admin-drawer-nav">
           {links.map((link) => (
             <NavLink key={link.href} {...link} />
           ))}
         </nav>
+        <div className="admin-drawer-footer">
+          <LogoutButton />
+        </div>
       </div>
 
       {drawerOpen && (
         <div
-          className="dash-drawer-backdrop"
+          className="admin-drawer-backdrop"
           onClick={() => setDrawerOpen(false)}
           onKeyDown={(e) => e.key === "Escape" && setDrawerOpen(false)}
           role="button"
@@ -90,7 +99,7 @@ export function DashboardLayoutClient({ isAdmin, children }: Props) {
         />
       )}
 
-      <main className="dash-main">{children}</main>
+      <main className="admin-main">{children}</main>
     </div>
   );
 }

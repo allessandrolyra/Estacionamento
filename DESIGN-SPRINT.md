@@ -1,7 +1,9 @@
 # Design Sprint — Melhorias de visualização e menu
 
 **Prioridade:** Design da página, menu, visualização geral  
-**Status:** ✅ Concluído  
+**Status:** ✅ Concluído
+
+**Atualização:** Sidebar padronizada para operador — mesmo layout que admin.  
 **Fase 5 (Convênios):** adiada
 
 ---

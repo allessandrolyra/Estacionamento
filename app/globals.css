@@ -939,6 +939,7 @@ button, a, input, select {
   margin-left: 0;
   padding: 1rem 1.5rem;
   min-width: 0;
+  background: var(--color-bg);
 }
 
 @media (min-width: 768px) {
