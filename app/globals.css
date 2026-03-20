@@ -1083,6 +1083,10 @@ button, a, input, select {
   background: rgba(255, 255, 255, 0.15);
 }
 
+.dash-header-nav-desktop .dash-nav-link:first-child {
+  font-weight: 700;
+}
+
 .dash-header-toggle {
   display: flex;
   align-items: center;

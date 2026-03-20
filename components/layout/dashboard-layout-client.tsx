@@ -16,7 +16,7 @@ export function DashboardLayoutClient({ isAdmin, children }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const links = [
-    { href: "/dashboard", label: "Estacionamento", icon: Car },
+    { href: "/dashboard", label: "Operações", icon: Car },
     { href: "/dashboard/mapa", label: "Mapa de Vagas", icon: MapPin },
     ...(isAdmin
       ? [

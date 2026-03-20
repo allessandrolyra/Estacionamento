@@ -10,6 +10,7 @@ import {
 } from "@/lib/services/entrada-service";
 import type { TipoVeiculo } from "@/lib/types";
 import type { TipoPagamento, SaidaPreview } from "@/lib/services/entrada-service";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 interface Props {
   total: number;
@@ -142,6 +143,8 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
 
   return (
     <div className="dash-container">
+      <Breadcrumb items={[{ label: "Operações" }]} />
+      <h1 className="page-title">Operações</h1>
       {vagas.lotado && (
         <div className="dash-alert-lotado">LOTADO</div>
       )}
