@@ -21,6 +21,7 @@ export default async function ConfigPage() {
         totalVagas={config?.total_vagas ?? 80}
         valorHora={config?.valor_hora ?? 5}
         fracaoMinima={config?.fracao_minima_minutos ?? 15}
+        valorMensalidade={config?.valor_mensalidade ?? 200}
       />
       <RegimesClient regimes={(regimes ?? []) as { id: string; nome: string; valor_hora: number; fracao_minutos: number }[]} />
     </div>

@@ -1351,6 +1351,20 @@ button, a, input, select {
   display: block;
 }
 
+/* Mensalistas status */
+.mensalista-status-ok {
+  color: #047857;
+  font-weight: 500;
+}
+.mensalista-status-alerta {
+  color: #b45309;
+  font-weight: 500;
+}
+.mensalista-status-vencido {
+  color: #dc2626;
+  font-weight: 600;
+}
+
 /* Breadcrumb */
 .breadcrumb {
   display: flex;

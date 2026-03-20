@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { FeedbackMessage } from "@/components/ui/feedback-message";
@@ -10,14 +10,20 @@ interface Props {
   totalVagas: number;
   valorHora: number;
   fracaoMinima: number;
+  valorMensalidade?: number;
 }
 
-export function ConfigClient({ id, totalVagas, valorHora, fracaoMinima }: Props) {
+export function ConfigClient({ id, totalVagas, valorHora, fracaoMinima, valorMensalidade = 200 }: Props) {
   const [total, setTotal] = useState(totalVagas);
   const [valor, setValor] = useState(valorHora);
   const [fracao, setFracao] = useState(fracaoMinima);
+  const [valorMensal, setValorMensal] = useState(valorMensalidade);
   const [msg, setMsg] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    setValorMensal(valorMensalidade);
+  }, [valorMensalidade]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,7 +35,7 @@ export function ConfigClient({ id, totalVagas, valorHora, fracaoMinima }: Props)
     }
     const { error } = await supabase
       .from("config")
-      .update({ total_vagas: total, valor_hora: valor, fracao_minima_minutos: fracao })
+      .update({ total_vagas: total, valor_hora: valor, fracao_minima_minutos: fracao, valor_mensalidade: valorMensal })
       .eq("id", id);
     if (error) {
       setMsg(error.message);
@@ -71,6 +77,17 @@ export function ConfigClient({ id, totalVagas, valorHora, fracaoMinima }: Props)
             className="dash-input"
             value={fracao}
             onChange={(e) => setFracao(parseInt(e.target.value) || 15)}
+          />
+        </div>
+        <div className="dash-field">
+          <label>Valor mensalidade padrão (R$)</label>
+          <input
+            type="number"
+            min={0}
+            step={0.01}
+            className="dash-input"
+            value={valorMensal}
+            onChange={(e) => setValorMensal(parseFloat(e.target.value) || 0)}
           />
         </div>
         <button type="submit" className="dash-btn dash-btn-primary">

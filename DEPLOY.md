@@ -66,6 +66,7 @@ Se ainda não aplicou, execute no SQL Editor do Supabase (em ordem):
 2. `supabase/migrations/007_ajustes_wagner.sql`
 3. `supabase/migrations/008_preco_regimes.sql`
 4. `supabase/migrations/009_realtime_entradas.sql` — **obrigatório para Realtime**
+5. `supabase/migrations/010_mensalistas_cobranca.sql` — valor mensalidade, pagamentos
 
 ---
 

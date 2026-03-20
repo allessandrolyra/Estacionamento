@@ -11,7 +11,12 @@ export async function listarMensalistas() {
   return data;
 }
 
-export async function criarMensalista(nome: string, placa: string, validade_ate: string) {
+export async function criarMensalista(
+  nome: string,
+  placa: string,
+  validade_ate: string,
+  valor_mensalidade?: number | null
+) {
   const placaNorm = normalizarPlaca(placa);
   if (!validarPlaca(placaNorm)) {
     throw new Error("Placa inválida. Use formato ABC-1234 ou ABC1D23");
@@ -22,13 +27,14 @@ export async function criarMensalista(nome: string, placa: string, validade_ate:
     placa: placaNorm,
     validade_ate,
     ativo: true,
+    valor_mensalidade: valor_mensalidade ?? null,
   });
   if (error) throw error;
 }
 
 export async function atualizarMensalista(
   id: string,
-  data: { nome?: string; placa?: string; validade_ate?: string; ativo?: boolean }
+  data: { nome?: string; placa?: string; validade_ate?: string; ativo?: boolean; valor_mensalidade?: number | null }
 ) {
   const supabase = createClient();
   if (data.placa) {

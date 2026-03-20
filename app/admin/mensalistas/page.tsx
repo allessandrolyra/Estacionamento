@@ -9,11 +9,15 @@ export default async function MensalistasPage() {
     .from("mensalistas")
     .select("*")
     .order("nome");
+  const { data: config } = await supabase.from("config").select("valor_mensalidade").single();
 
   return (
-    <div style={{ maxWidth: "800px" }}>
-      <h1 style={{ marginBottom: "1.5rem" }}>Mensalistas</h1>
-      <MensalistasClient initial={mensalistas ?? []} />
+    <div className="dash-container">
+      <h1 className="page-title">Mensalistas</h1>
+      <MensalistasClient
+        initial={mensalistas ?? []}
+        valorMensalidadePadrao={config?.valor_mensalidade ?? 200}
+      />
     </div>
   );
 }

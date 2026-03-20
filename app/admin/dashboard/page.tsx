@@ -12,6 +12,7 @@ export default async function AdminDashboardPage() {
   let totalFaturamento = 0;
   let valorTotalRecebido = 0;
   let entradasAtivas: { id: string; placa: string; tipo: string; entrada_em: string; vaga_numero: number | null }[] = [];
+  let mensalistasVencendo: { nome: string; placa: string; validade_ate: string; dias: number }[] = [];
   let error = "";
 
   try {
@@ -47,6 +48,23 @@ export default async function AdminDashboardPage() {
     ocupadas = count ?? 0;
     disponiveis = Math.max(0, total - ocupadas);
     entradasAtivas = entradas ?? [];
+
+    const { data: mensalistas } = await supabase
+      .from("mensalistas")
+      .select("nome, placa, validade_ate")
+      .eq("ativo", true);
+    const hojeObj = new Date();
+    hojeObj.setHours(0, 0, 0, 0);
+    mensalistasVencendo =
+      mensalistas
+        ?.map((m) => {
+          const validade = new Date(m.validade_ate + "T23:59:59");
+          const diffMs = validade.getTime() - hojeObj.getTime();
+          const dias = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+          return { ...m, dias };
+        })
+        .filter((m) => m.dias >= 0 && m.dias <= 7)
+        .sort((a, b) => a.dias - b.dias) ?? [];
   } catch (e) {
     error = e instanceof Error ? e.message : "Erro ao carregar dados. Execute o SQL em supabase/APLICAR-RLS-POLICIES.sql no Supabase.";
   }
@@ -59,6 +77,24 @@ export default async function AdminDashboardPage() {
       {error && (
         <div className="dash-msg error" style={{ marginBottom: "1rem" }}>
           {error}
+        </div>
+      )}
+
+      {mensalistasVencendo.length > 0 && (
+        <div className="dash-form-card" style={{ marginBottom: "1.5rem", background: "#fffbeb", border: "1px solid #fcd34d" }}>
+          <h2 style={{ fontSize: "1rem", marginBottom: "0.5rem", color: "#b45309" }}>
+            ⚠ Mensalistas com validade próxima ({mensalistasVencendo.length})
+          </h2>
+          <ul style={{ margin: 0, paddingLeft: "1.25rem", fontSize: "0.9rem" }}>
+            {mensalistasVencendo.map((m) => (
+              <li key={m.placa}>
+                <strong>{m.nome}</strong> ({m.placa}) — vence em {m.dias} dia(s) — {new Date(m.validade_ate).toLocaleDateString("pt-BR")}
+              </li>
+            ))}
+          </ul>
+          <a href="/admin/mensalistas" className="dash-btn" style={{ marginTop: "0.75rem", display: "inline-block", textDecoration: "none" }}>
+            Ir para Mensalistas
+          </a>
         </div>
       )}
 
