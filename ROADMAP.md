@@ -14,6 +14,7 @@
 | 2 | Consulta por Placa | ✅ Concluído | — |
 | 3 | Fechamento de caixa + Relatório impressão + Ajuste vagas | ✅ Concluído | — |
 | 4 | Múltiplas tabelas de preço | ✅ Concluído | — |
+| — | **Design** (menu, visualização, responsivo) | ✅ Concluído | — |
 | 5 | Convênios | 📋 Planejado | Médio |
 | 6 | Checklist de avarias | 📋 Planejado | Baixo |
 | 7 | NF-e | 📋 Planejado | Alto |
@@ -130,12 +131,48 @@ Permitir diferentes valores conforme horário (comercial vs noturno) e dia da se
 
 ---
 
+## Fase 5 — Convênios (detalhada)
+
+### 5.1 Objetivo
+
+Permitir que empresas/convênios tenham placas vinculadas com desconto ou gratuidade no estacionamento.
+
+### 5.2 Funcionalidades
+
+| Item | Descrição |
+|------|-----------|
+| **Cadastro convênios** | Nome da empresa, desconto (0–100%), validade, ativo |
+| **Vincular placas** | Admin associa placas a um convênio |
+| **Cálculo na saída** | Se placa tem convênio ativo → aplicar desconto ou gratuidade (0%) |
+| **Interface** | Página Admin > Convênios (CRUD) |
+
+### 5.3 Regras de negócio
+
+- Convênio ativo e dentro da validade
+- Placa pode estar em apenas um convênio
+- Desconto 0% = gratuidade; 100% = sem desconto
+- Prioridade: mensalista > convênio > rotativo
+
+### 5.4 Critérios de aceite
+
+- [ ] Admin cadastra convênios (nome, desconto, validade)
+- [ ] Admin vincula placas a convênios
+- [ ] Saída com placa de convênio aplica desconto correto
+- [ ] Convênio fora da validade não aplica desconto
+
+### 5.5 Estimativa
+
+| Tarefa | Esforço |
+|--------|---------|
+| Migration: convenios + convenio_placas | 1h |
+| Lógica: verificar convênio na saída | 1–2h |
+| Página Admin Convênios (CRUD) | 2–3h |
+| Testes | 1h |
+| **Total** | **5–7h** |
+
+---
+
 ## Fases futuras (resumo)
-
-### Fase 5 — Convênios
-
-- Cadastro de empresas/convênios
-- Desconto ou gratuidade para placas vinculadas
 
 ### Fase 6 — Checklist de avarias
 

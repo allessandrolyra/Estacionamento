@@ -17,16 +17,14 @@ git push origin main
 
 ---
 
-## Deploy desta fase (Fase 4 — Múltiplas tabelas de preço)
+## Deploy desta fase (Design — menu, sidebar, ícones)
 
 ```bash
 cd "c:\01. Foursys\06. BMAD Cursor\estacionamento"
 git add .
-git commit -m "feat: Fase 4 - Múltiplas tabelas de preço (comercial, noturno, fim de semana)"
+git commit -m "feat: Design - sidebar admin, menu responsivo, ícones, estados vazios, breadcrumb"
 git push origin main
 ```
-
-**Antes:** executar migration 008 no Supabase SQL Editor.
 
 ---
 

@@ -322,7 +322,10 @@ export function RelatoriosClient() {
           </table>
         </div>
         {entradas.length === 0 && !carregando && (
-          <p className="admin-usuarios-empty">Nenhum registro no período</p>
+          <div className="dash-empty-state">
+            <span className="dash-empty-state-icon" aria-hidden>📊</span>
+            <p style={{ margin: 0 }}>Nenhum registro no período</p>
+          </div>
         )}
         {totalPaginas > 1 && (
           <div className="relatorios-paginacao">

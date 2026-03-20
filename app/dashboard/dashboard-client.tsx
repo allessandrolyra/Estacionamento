@@ -295,7 +295,10 @@ export function DashboardClient({ total, ocupadas, disponiveis, lotado }: Props)
           </tbody>
         </table>
         {entradasAtivas.length === 0 && (
-          <p className="admin-usuarios-empty">Nenhuma entrada ativa</p>
+          <div className="dash-empty-state">
+            <span className="dash-empty-state-icon" aria-hidden>📋</span>
+            <p style={{ margin: 0 }}>Nenhuma entrada ativa no momento</p>
+          </div>
         )}
       </div>
 

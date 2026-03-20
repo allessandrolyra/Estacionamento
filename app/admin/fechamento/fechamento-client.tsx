@@ -6,6 +6,7 @@ import {
   type EntradaRelatorio,
   type ResumoRelatorio,
 } from "@/lib/services/relatorio-service";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 function formatarDataBR(d: string) {
   return new Date(d).toLocaleString("pt-BR", {
@@ -131,6 +132,7 @@ export function FechamentoClient() {
 
   return (
     <div className="dash-container">
+      <Breadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Fechamento de Caixa" }]} />
       <h1 className="page-title">Fechamento de Caixa</h1>
 
       <div className="dash-form-card">
@@ -242,7 +244,10 @@ export function FechamentoClient() {
               </table>
             </div>
             {entradas.length === 0 && !carregando && (
-              <p className="admin-usuarios-empty">Nenhuma movimentação nesta data</p>
+              <div className="dash-empty-state">
+                <span className="dash-empty-state-icon" aria-hidden>📄</span>
+                <p style={{ margin: 0 }}>Nenhuma movimentação nesta data</p>
+              </div>
             )}
           </div>
         </>
