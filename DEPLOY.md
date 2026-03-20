@@ -11,7 +11,18 @@ git push origin main
 
 ---
 
-## Deploy desta fase (Histórico — Fase 2)
+## Deploy desta fase (Design visual e responsivo)
+
+```bash
+cd "c:\01. Foursys\06. BMAD Cursor\estacionamento"
+git add .
+git commit -m "feat: design visual - config centralizado, responsivo, touch targets"
+git push origin main
+```
+
+---
+
+## Deploy anterior (Histórico — Fase 2)
 
 ```bash
 cd "c:\01. Foursys\06. BMAD Cursor\estacionamento"

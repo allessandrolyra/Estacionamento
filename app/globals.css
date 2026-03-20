@@ -53,6 +53,10 @@ input:focus, select:focus, button:focus-visible {
   outline-offset: 2px;
 }
 
+button, a, input, select {
+  -webkit-tap-highlight-color: rgba(14, 165, 233, 0.2);
+}
+
 /* Mapa de Vagas */
 .mapa-container {
   max-width: 1100px;
@@ -253,6 +257,26 @@ input:focus, select:focus, button:focus-visible {
 .dash-container {
   max-width: 800px;
   margin: 0 auto;
+  width: 100%;
+}
+
+.page-title {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* Config - centralizado */
+.config-page {
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.config-form {
+  width: 100%;
 }
 
 .dash-alert-lotado {
@@ -343,10 +367,18 @@ input:focus, select:focus, button:focus-visible {
 
 .dash-input {
   width: 100%;
+  min-height: 44px;
   padding: 0.6rem 0.75rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+  .dash-input {
+    min-height: 48px;
+    font-size: 16px;
+  }
 }
 
 .dash-input:focus {
@@ -355,7 +387,8 @@ input:focus, select:focus, button:focus-visible {
 
 .dash-btn {
   width: 100%;
-  padding: 0.65rem;
+  min-height: 44px;
+  padding: 0.65rem 1rem;
   border: none;
   border-radius: var(--radius-sm);
   font-size: 1rem;
@@ -364,8 +397,20 @@ input:focus, select:focus, button:focus-visible {
   transition: opacity 0.15s, transform 0.05s;
 }
 
+@media (max-width: 480px) {
+  .dash-btn {
+    min-height: 48px;
+    padding: 0.75rem 1rem;
+  }
+}
+
 .dash-btn:active {
   transform: scale(0.98);
+}
+
+.dash-btn-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: white;
 }
 
 .dash-btn-entrada {
@@ -507,8 +552,26 @@ input:focus, select:focus, button:focus-visible {
 
 .dash-nav {
   display: flex;
-  gap: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
   align-items: center;
+}
+
+@media (max-width: 640px) {
+  .dash-header {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+    padding: 1rem;
+  }
+
+  .dash-nav {
+    justify-content: center;
+  }
+
+  .dash-nav a {
+    font-size: 0.9rem;
+  }
 }
 
 .dash-nav a {
@@ -527,7 +590,14 @@ input:focus, select:focus, button:focus-visible {
 
 .dash-main {
   flex: 1;
-  padding: 1.5rem;
+  padding: 1rem 1.5rem;
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  .dash-main {
+    padding: 1rem;
+  }
 }
 
 .admin-header {
@@ -591,6 +661,14 @@ input:focus, select:focus, button:focus-visible {
   text-align: left;
   padding: 0.6rem;
   border-bottom: 1px solid var(--color-border);
+}
+
+@media (max-width: 600px) {
+  .admin-usuarios-table th,
+  .admin-usuarios-table td {
+    padding: 0.5rem 0.4rem;
+    font-size: 0.9rem;
+  }
 }
 
 .admin-usuarios-badge {

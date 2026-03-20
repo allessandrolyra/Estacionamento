@@ -52,7 +52,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="dash-container">
-      <h1 style={{ marginBottom: "1.5rem" }}>Painel Admin</h1>
+      <h1 className="page-title">Painel Admin</h1>
 
       {error && (
         <div className="dash-msg error" style={{ marginBottom: "1rem" }}>

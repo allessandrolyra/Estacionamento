@@ -8,8 +8,8 @@ export default async function ConfigPage() {
   const { data: config } = await supabase.from("config").select("*").single();
 
   return (
-    <div style={{ maxWidth: "500px" }}>
-      <h1 style={{ marginBottom: "1.5rem" }}>Configuração</h1>
+    <div className="dash-container config-page">
+      <h1 className="page-title">Configuração</h1>
       <ConfigClient
         id={config?.id}
         totalVagas={config?.total_vagas ?? 80}

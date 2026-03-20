@@ -89,7 +89,7 @@ export function RelatoriosClient() {
 
   return (
     <div className="dash-container relatorios-container">
-      <h1 style={{ marginBottom: "1.5rem" }}>Relatórios</h1>
+      <h1 className="page-title">Relatórios</h1>
 
       <div className="relatorios-filtros dash-form-card">
         <h2>Filtros</h2>
